@@ -1,0 +1,190 @@
+{
+  "characteristics": [
+    {
+      "feature": "Mutability",
+      "list": "Mutable",
+      "tuple": "Immutable",
+      "set": "Mutable",
+      "dict": "Mutable"
+    },
+    {
+      "feature": "Ordering",
+      "list": "Ordered",
+      "tuple": "Ordered",
+      "set": "Unordered",
+      "dict": "Ordered (Python 3.7+)"
+    },
+    {
+      "feature": "Indexing",
+      "list": "Yes (by position)",
+      "tuple": "Yes (by position)",
+      "set": "No",
+      "dict": "Yes (by key)"
+    },
+    {
+      "feature": "Duplicates",
+      "list": "Allowed",
+      "tuple": "Allowed",
+      "set": "Not allowed",
+      "dict": "Not allowed (keys)"
+    },
+    {
+      "feature": "Heterogeneous",
+      "list": "Yes",
+      "tuple": "Yes",
+      "set": "Yes",
+      "dict": "Yes"
+    },
+    {
+      "feature": "Memory Usage",
+      "list": "Medium",
+      "tuple": "Low",
+      "set": "High",
+      "dict": "Highest"
+    },
+    {
+      "feature": "Search Speed",
+      "list": "O(n)",
+      "tuple": "O(n)",
+      "set": "O(1)",
+      "dict": "O(1)"
+    },
+    {
+      "feature": "Insertion Speed",
+      "list": "O(1) at end, O(n) elsewhere",
+      "tuple": "N/A (immutable)",
+      "set": "O(1)",
+      "dict": "O(1)"
+    }
+  ],
+  "operations": [
+    {
+      "operation": "Creation",
+      "list": "list_var = [1, 2, 3]",
+      "tuple": "tuple_var = (1, 2, 3)",
+      "set": "set_var = {1, 2, 3}",
+      "dict": "dict_var = {'a': 1, 'b': 2}"
+    },
+    {
+      "operation": "Access Element",
+      "list": "list_var[0]",
+      "tuple": "tuple_var[0]",
+      "set": "next(iter(set_var))",
+      "dict": "dict_var['a']"
+    },
+    {
+      "operation": "Add Element",
+      "list": "list_var.append(4)",
+      "tuple": "new_tuple = tuple_var + (4,)",
+      "set": "set_var.add(4)",
+      "dict": "dict_var['c'] = 3"
+    },
+    {
+      "operation": "Remove Element",
+      "list": "list_var.remove(2)",
+      "tuple": "N/A (create new tuple)",
+      "set": "set_var.remove(2)",
+      "dict": "del dict_var['b']"
+    },
+    {
+      "operation": "Check Membership",
+      "list": "2 in list_var",
+      "tuple": "2 in tuple_var",
+      "set": "2 in set_var",
+      "dict": "'a' in dict_var"
+    },
+    {
+      "operation": "Length",
+      "list": "len(list_var)",
+      "tuple": "len(tuple_var)",
+      "set": "len(set_var)",
+      "dict": "len(dict_var)"
+    },
+    {
+      "operation": "Iteration",
+      "list": "for item in list_var:",
+      "tuple": "for item in tuple_var:",
+      "set": "for item in set_var:",
+      "dict": "for key in dict_var:"
+    },
+    {
+      "operation": "Comprehension",
+      "list": "[x*2 for x in range(5)]",
+      "tuple": "tuple(x*2 for x in range(5))",
+      "set": "{x*2 for x in range(5)}",
+      "dict": "{x: x*2 for x in range(5)}"
+    }
+  ],
+  "use_cases": [
+    {
+      "scenario": "Storing a sequence of values that won't change",
+      "list": 2,
+      "tuple": 5,
+      "set": 1,
+      "dict": 1
+    },
+    {
+      "scenario": "Need to modify the collection frequently",
+      "list": 5,
+      "tuple": 1,
+      "set": 4,
+      "dict": 4
+    },
+    {
+      "scenario": "Need to ensure unique values",
+      "list": 2,
+      "tuple": 2,
+      "set": 5,
+      "dict": 3
+    },
+    {
+      "scenario": "Need to associate values with keys",
+      "list": 1,
+      "tuple": 1,
+      "set": 1,
+      "dict": 5
+    },
+    {
+      "scenario": "Need fast membership testing",
+      "list": 2,
+      "tuple": 2,
+      "set": 5,
+      "dict": 5
+    },
+    {
+      "scenario": "Need to preserve insertion order",
+      "list": 5,
+      "tuple": 5,
+      "set": 1,
+      "dict": 4
+    },
+    {
+      "scenario": "Memory efficiency is critical",
+      "list": 3,
+      "tuple": 5,
+      "set": 2,
+      "dict": 1
+    },
+    {
+      "scenario": "Need to represent record-like data",
+      "list": 3,
+      "tuple": 4,
+      "set": 1,
+      "dict": 5
+    }
+  ],
+  "performance_metrics": {
+    "operations": ["Creation", "Access", "Insertion", "Deletion", "Membership", "Iteration"],
+    "list": [95, 100, 80, 70, 50, 90],
+    "tuple": [100, 100, 0, 0, 50, 95],
+    "set": [90, 0, 95, 95, 100, 85],
+    "dict": [85, 95, 95, 95, 100, 80]
+  },
+  "memory_efficiency": {
+    "sizes": [100, 1000, 10000, 100000],
+    "list": [100, 1000, 10000, 100000],
+    "tuple": [80, 800, 8000, 80000],
+    "set": [200, 2000, 20000, 200000],
+    "dict": [240, 2400, 24000, 240000]
+  }
+}

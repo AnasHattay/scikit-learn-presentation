@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+    .code-block {
+      background-color: rgba(18, 55, 122, 0.05);
+      border-left: 4px solid #12377A;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      margin: 12px 0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 500;
+    }
+    .example-box {
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(18, 55, 122, 0.2);
+      transition: all 0.3s ease;
+    }
+    .example-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(18, 55, 122, 0.1);
+      border-color: rgba(18, 55, 122, 0.5);
+    }
+    .example-title {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .output {
+      color: #22c55e;
+      font-style: italic;
+      margin-top: 8px;
+    }
+    .data-structure-header {
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      padding: 12px;
+      border-radius: 8px 8px 0 0;
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+    .data-structure-content {
+      margin-top: 0;
+      border-radius: 0 0 8px 8px;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Loops with Data Structures</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <div class="data-structure-header">
+          <i class="fas fa-list"></i> Lists - Ordered Collections
+        </div>
+        <div class="example-box data-structure-content">
+          <div class="example-title">Basic List Iteration</div>
+          <div class="code-block">fruits = ['apple', 'banana', 'cherry']
+
+# Iterate over values
+for fruit in fruits:
+    print(fruit)
+
+# Iterate with index
+for i, fruit in enumerate(fruits):
+    print(f"{i}: {fruit}")
+
+# Iterate with range (when you need index)
+for i in range(len(fruits)):
+    print(f"{i}: {fruits[i]}")</div>
+          <div class="output">Output: 0: apple, 1: banana, 2: cherry</div>
+        </div>
+        
+        
+        <div class="data-structure-header">
+          <i class="fas fa-key"></i> Dictionaries - Key-Value Pairs
+        </div>
+        <div class="example-box data-structure-content">
+          <div class="example-title">Dictionary Iteration Methods</div>
+          <div class="code-block">student_grades = {
+    'Alice': 95, 'Bob': 87, 'Charlie': 92
+}
+
+# Iterate over keys (default)
+for name in student_grades:
+    print(name)
+
+# Iterate over values
+for grade in student_grades.values():
+    print(grade)
+
+# Iterate over key-value pairs
+for name, grade in student_grades.items():
+    print(f"{name}: {grade}")
+    
+# Iterate with enumeration
+for i, (name, grade) in enumerate(student_grades.items()):
+    print(f"{i+1}. {name}: {grade}")</div>
+          <div class="output">Output: 1. Alice: 95, 2. Bob: 87, 3. Charlie: 92</div>
+        </div>
+      </div>
+      
+      <div>
+        <div class="data-structure-header">
+          <i class="fas fa-circle"></i> Sets - Unique Collections
+        </div>
+        <div class="example-box data-structure-content">
+          <div class="example-title">Set Operations in Loops</div>
+          <div class="code-block">colors = {'red', 'green', 'blue', 'yellow'}
+warm_colors = {'red', 'orange', 'yellow'}
+
+# Basic iteration
+for color in colors:
+    print(color)
+
+# Check membership during iteration
+for color in colors:
+    if color in warm_colors:
+        print(f"{color} is a warm color")
+    else:
+        print(f"{color} is a cool color")
+
+# Set operations
+common = colors & warm_colors  # Intersection
+for color in common:
+    print(f"Common color: {color}")</div>
+          <div class="output">Common colors: red, yellow</div>
+        </div>
+        
+        
+        <div class="example-box">
+          <div class="example-title">Multiple Data Structures</div>
+          <div class="code-block"># Combining different data structures
+students = ['Alice', 'Bob', 'Charlie']
+grades = [95, 87, 92]
+subjects = ('Math', 'Science', 'English')
+
+# Using zip to iterate multiple sequences
+for student, grade, subject in zip(students, grades, subjects):
+    print(f"{student}: {grade} in {subject}")
+
+# Nested data structures
+class_data = {
+    'students': ['Alice', 'Bob'],
+    'grades': [95, 87],
+    'subjects': ['Math', 'Science']
+}
+
+for key, values in class_data.items():
+    print(f"{key}:")
+    for value in values:
+        print(f"  {value}")</div>
+          <div class="output">Alice: 95 in Math, Bob: 87 in Science</div>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
+
+  <script>
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>

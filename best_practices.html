@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #FFFFFF;
+      color: #333333;
+      font-family: 'Arial', sans-serif;
+    }
+    .title {
+      color: #000000;
+      font-size: 36px;
+      font-weight: bold;
+    }
+    .subtitle {
+      color: #000000;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .accent {
+      color: #CC0000;
+    }
+    .practice-item {
+      border-left: 3px solid #CC0000;
+      padding-left: 15px;
+      margin-bottom: 16px;
+    }
+    .practice-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #000000;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Best Practices</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <img src="images/nm1E616jBpwx.jpg" alt="Data Structures Comparison" class="max-h-96">
+      </div>
+      
+      <div>
+        <div class="practice-item">
+          <p class="practice-title">Choose the Right Structure for the Task</p>
+          <p>Select based on operations needed (insertion, deletion, lookup) and data characteristics.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Consider Performance Implications</p>
+          <p>Time complexity matters for large datasets. Sets and dictionaries offer O(1) lookups.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Use List Comprehensions</p>
+          <p>More efficient and readable than traditional loops for creating and transforming lists.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Leverage Dictionary Comprehensions</p>
+          <p>Create dictionaries efficiently from iterables with clear, concise syntax.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Use Sets for Membership Testing</p>
+          <p>Much faster than lists when checking if an item exists in a collection.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Consider Memory Usage</p>
+          <p>Tuples use less memory than lists. Use generators for large sequences.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Use Named Tuples for Clarity</p>
+          <p>Improve code readability with field names instead of numeric indices.</p>
+        </div>
+        
+        <div class="practice-item">
+          <p class="practice-title">Avoid Modifying During Iteration</p>
+          <p>Create a new structure or use a copy when modifying during iteration.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

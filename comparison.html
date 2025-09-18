@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #12377A;
+      font-size: 48px;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(18, 55, 122, 0.1);
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 20px;
+      box-shadow: 0 8px 25px rgba(18, 55, 122, 0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+    }
+    .comparison-table th, .comparison-table td {
+      border: none;
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+    }
+    .comparison-table th {
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      font-weight: 700;
+      font-size: 26px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      letter-spacing: 0.5px;
+    }
+    .comparison-table td {
+      border-bottom: 1px solid rgba(18, 55, 122, 0.1);
+      transition: all 0.3s ease;
+    }
+    .comparison-table tr:nth-child(even) td {
+      background-color: rgba(242, 249, 252, 0.5);
+    }
+    .comparison-table tr:hover td {
+      background-color: rgba(18, 55, 122, 0.08);
+      transform: scale(1.01);
+    }
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+    .list-color {
+      color: rgba(18, 55, 122, 1);
+      font-weight: 700;
+      font-size: 22px;
+      text-shadow: 0 1px 2px rgba(18, 55, 122, 0.2);
+    }
+    .tuple-color {
+      color: rgba(54, 162, 235, 1);
+      font-weight: 700;
+      font-size: 22px;
+      text-shadow: 0 1px 2px rgba(54, 162, 235, 0.2);
+    }
+    .set-color {
+      color: rgba(75, 192, 192, 1);
+      font-weight: 700;
+      font-size: 22px;
+      text-shadow: 0 1px 2px rgba(75, 192, 192, 0.2);
+    }
+    .dict-color {
+      color: rgba(153, 102, 255, 1);
+      font-weight: 700;
+      font-size: 22px;
+      text-shadow: 0 1px 2px rgba(153, 102, 255, 0.2);
+    }
+    .feature-name {
+      font-weight: 700;
+      text-align: left !important;
+      color: #12377A;
+      font-size: 22px;
+      text-shadow: 0 1px 2px rgba(18, 55, 122, 0.1);
+      padding-left: 16px;
+      position: relative;
+    }
+    .feature-name::before {
+      content: "▶";
+      position: absolute;
+      left: 0;
+      color: #12377A;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+    }
+    .comparison-table tr:hover .feature-name::before {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+    
+    /* Add subtle animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .comparison-table {
+      animation: fadeInUp 0.8s ease-out;
+    }
+    
+    .title {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    /* Enhanced cell styling */
+    .comparison-table td {
+      font-weight: 500;
+      position: relative;
+    }
+    
+    .comparison-table td:not(.feature-name) {
+      font-size: 18px;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10 relative">
+    <!-- Background decorative elements -->
+    <div class="absolute top-10 right-10 w-40 h-40 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 opacity-30"></div>
+    <div class="absolute bottom-10 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 opacity-25"></div>
+    <div class="absolute top-1/2 left-1/4 w-20 h-20 rounded-full bg-gradient-to-br from-blue-200 to-blue-300 opacity-20"></div>
+    
+    <div class="relative z-10">
+      <div class="text-center mb-8">
+        <h1 class="title mb-4">Data Structures Comparison</h1>
+      </div>
+      
+      <div class="flex justify-center mt-8">
+        <div class="body-text w-full max-w-7xl">
+          <div class="bg-white rounded-xl shadow-2xl p-10 border border-gray-100">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>
+                    <i class="fas fa-list-ul mr-2"></i>Feature
+                  </th>
+                  <th>
+                    <i class="fas fa-list mr-2"></i><span class="list-color">Lists</span>
+                  </th>
+                  <th>
+                    <i class="fas fa-lock mr-2"></i><span class="tuple-color">Tuples</span>
+                  </th>
+                  <th>
+                    <i class="fas fa-circle mr-2"></i><span class="set-color">Sets</span>
+                  </th>
+                  <th>
+                    <i class="fas fa-key mr-2"></i><span class="dict-color">Dictionaries</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="comparisonTableBody">
+                <!-- Table content will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch the comparison data
+    fetch('data/structure_comparison.json')
+      .then(response => response.json())
+      .then(data => {
+        // Populate the comparison table
+        const tableBody = document.getElementById('comparisonTableBody');
+        
+        // Add key characteristics
+        data.characteristics.slice(0, 5).forEach(row => {
+          const tr = document.createElement('tr');
+          
+          const featureCell = document.createElement('td');
+          featureCell.textContent = row.feature;
+          featureCell.className = 'feature-name';
+          tr.appendChild(featureCell);
+          
+          const listCell = document.createElement('td');
+          listCell.textContent = row.list;
+          listCell.className = row.list.includes('Yes') || row.list.includes('Allowed') || row.list === 'Ordered' || row.list === 'Mutable' ? 'list-color' : '';
+          tr.appendChild(listCell);
+          
+          const tupleCell = document.createElement('td');
+          tupleCell.textContent = row.tuple;
+          tupleCell.className = row.tuple.includes('Yes') || row.tuple.includes('Allowed') || row.tuple === 'Ordered' ? 'tuple-color' : '';
+          tr.appendChild(tupleCell);
+          
+          const setCell = document.createElement('td');
+          setCell.textContent = row.set;
+          setCell.className = row.set.includes('Yes') || row.set === 'Mutable' ? 'set-color' : '';
+          tr.appendChild(setCell);
+          
+          const dictCell = document.createElement('td');
+          dictCell.textContent = row.dict;
+          dictCell.className = row.dict.includes('Yes') || row.dict === 'Mutable' || row.dict.includes('Ordered') ? 'dict-color' : '';
+          tr.appendChild(dictCell);
+          
+          tableBody.appendChild(tr);
+        });
+        
+      })
+      .catch(error => {
+        console.error('Error loading comparison data:', error);
+        document.getElementById('comparisonTableBody').innerHTML = 'Error loading table data';
+      });
+  </script>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

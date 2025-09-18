@@ -1,0 +1,38 @@
+{
+  "categories": ["Data Collection", "Data Cleaning", "Data Analysis", "Data Visualization", "Machine Learning"],
+  "structures": ["Lists", "Tuples", "Sets", "Dictionaries"],
+  "usage_data": [
+    {
+      "structure": "Lists",
+      "Data Collection": 85,
+      "Data Cleaning": 60,
+      "Data Analysis": 50,
+      "Data Visualization": 40,
+      "Machine Learning": 65
+    },
+    {
+      "structure": "Tuples",
+      "Data Collection": 30,
+      "Data Cleaning": 25,
+      "Data Analysis": 20,
+      "Data Visualization": 75,
+      "Machine Learning": 35
+    },
+    {
+      "structure": "Sets",
+      "Data Collection": 15,
+      "Data Cleaning": 70,
+      "Data Analysis": 80,
+      "Data Visualization": 10,
+      "Machine Learning": 40
+    },
+    {
+      "structure": "Dictionaries",
+      "Data Collection": 60,
+      "Data Cleaning": 85,
+      "Data Analysis": 75,
+      "Data Visualization": 50,
+      "Machine Learning": 80
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .code-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .example-box {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .warning-box {
+      background-color: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .success-box {
+      background-color: rgba(40, 167, 69, 0.1);
+      border-left: 4px solid #28a745;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .memory-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+    }
+    .memory-box {
+      border: 2px solid #12377A;
+      padding: 10px;
+      margin: 5px;
+      background-color: rgba(18, 55, 122, 0.1);
+      border-radius: 4px;
+    }
+    .pointer-arrow {
+      font-size: 20px;
+      color: #12377A;
+      margin: 0 10px;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Mutability & Nested Data Structures</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <p class="body-text mb-4">Since lists store elements by their references, if we change the element in the list it will change everywhere else.</p>
+        
+        <div class="example-box">
+          <h3 class="highlight text-lg mb-3">Example: List containing a List</h3>
+          <div class="code-example">
+# Original list
+original_list = [1, 2, 3]
+
+# Create a list containing the original list
+container_list = [original_list, 'other_data']
+
+print("Before:", container_list)
+          </div>
+          <div class="body-text">
+            <p><strong>Output:</strong></p>
+            <div class="code-example">
+Before: [[1, 2, 3], 'other_data']
+            </div>
+          </div>
+          
+          <div class="warning-box">
+            <p class="body-text"><strong>Key Question:</strong> What happens when we modify <code class="highlight">original_list</code>?</p>
+          </div>
+          
+          <div class="code-example">
+# Modify the original list
+original_list.append(4)
+
+print("After:", container_list)
+          </div>
+          <div class="body-text">
+            <p><strong>Output:</strong></p>
+            <div class="code-example">
+After: [[1, 2, 3, 4], 'other_data']
+            </div>
+          </div>
+          
+          <div class="success-box">
+            <p class="body-text"><strong>Result:</strong> The change appears in <code class="highlight">container_list</code> because lists are <span class="highlight">mutable</span> and stored by reference!</p>
+          </div>
+        </div>
+        
+        <div class="memory-diagram">
+          <div class="memory-box">
+            original_list<br/>
+            [1,2,3,4]<br/>
+            @0x123
+          </div>
+          <div class="pointer-arrow">→</div>
+          <div class="memory-box">
+            container_list<br/>
+            [@0x123, 'other_data']<br/>
+            @0x456
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">Contrast: Immutable vs Mutable</h2>
+        
+        <div class="example-box">
+          <h3 class="highlight text-lg mb-3">Tuple containing a List (Mixed Mutability)</h3>
+          <div class="code-example">
+# Tuple containing a mutable list
+my_tuple = ([1, 2, 3], 'immutable_string')
+
+print("Before:", my_tuple)
+
+# Can't modify the tuple itself
+# my_tuple[0] = [4, 5, 6]  # This would raise an error!
+
+# But can modify the list INSIDE the tuple
+my_tuple[0].append(4)
+
+print("After:", my_tuple)
+          </div>
+          <div class="body-text">
+            <p><strong>Output:</strong></p>
+            <div class="code-example">
+Before: ([1, 2, 3], 'immutable_string')
+
+After: ([1, 2, 3, 4], 'immutable_string')
+            </div>
+          </div>
+          
+          <div class="warning-box">
+            <p class="body-text"><strong>Important:</strong> The tuple structure is immutable, but the <span class="highlight">contents</span> of mutable objects within it can still change!</p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

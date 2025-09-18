@@ -1,0 +1,150 @@
+{
+  "lists": [
+    {
+      "name": "List Comprehension",
+      "code": "[x**2 for x in range(10) if x % 2 == 0]",
+      "description": "Create squares of even numbers from 0-9",
+      "result": "[0, 4, 16, 36, 64]",
+      "coolness": 95
+    },
+    {
+      "name": "Nested List Comprehension",
+      "code": "[[i*j for j in range(1, 4)] for i in range(1, 4)]",
+      "description": "Create a multiplication table",
+      "result": "[[1, 2, 3], [2, 4, 6], [3, 6, 9]]",
+      "coolness": 90
+    },
+    {
+      "name": "List Slicing",
+      "code": "numbers = [1, 2, 3, 4, 5]; numbers[::-1]",
+      "description": "Reverse a list with slicing",
+      "result": "[5, 4, 3, 2, 1]",
+      "coolness": 85
+    },
+    {
+      "name": "List as Stack",
+      "code": "stack = []; stack.append(1); stack.append(2); stack.pop()",
+      "description": "Using a list as a stack (LIFO)",
+      "result": "2",
+      "coolness": 80
+    },
+    {
+      "name": "List Unpacking",
+      "code": "first, *middle, last = [1, 2, 3, 4, 5]",
+      "description": "Unpack values with * operator",
+      "result": "first=1, middle=[2, 3, 4], last=5",
+      "coolness": 92
+    }
+  ],
+  "tuples": [
+    {
+      "name": "Multiple Assignment",
+      "code": "a, b = 1, 2; a, b = b, a",
+      "description": "Swap values without temporary variable",
+      "result": "a=2, b=1",
+      "coolness": 95
+    },
+    {
+      "name": "Named Tuples",
+      "code": "from collections import namedtuple; Point = namedtuple('Point', ['x', 'y']); p = Point(1, 2); p.x",
+      "description": "Create readable tuples with named fields",
+      "result": "1",
+      "coolness": 90
+    },
+    {
+      "name": "Tuple as Dictionary Key",
+      "code": "locations = {(40.7128, -74.0060): 'New York', (34.0522, -118.2437): 'Los Angeles'}",
+      "description": "Using immutable tuples as dictionary keys",
+      "result": "Dictionary with coordinate keys",
+      "coolness": 85
+    },
+    {
+      "name": "Tuple Unpacking in Loops",
+      "code": "points = [(1, 2), (3, 4), (5, 6)]; for x, y in points: print(x + y)",
+      "description": "Unpack tuple values directly in loop",
+      "result": "3, 7, 11",
+      "coolness": 88
+    },
+    {
+      "name": "Return Multiple Values",
+      "code": "def stats(numbers): return min(numbers), max(numbers), sum(numbers)/len(numbers)",
+      "description": "Return multiple values from a function",
+      "result": "Function returning (minimum, maximum, average)",
+      "coolness": 92
+    }
+  ],
+  "sets": [
+    {
+      "name": "Set Comprehension",
+      "code": "{x**2 for x in range(-5, 6)}",
+      "description": "Create a set of squares (duplicates automatically removed)",
+      "result": "{0, 1, 4, 9, 16, 25}",
+      "coolness": 90
+    },
+    {
+      "name": "Finding Unique Elements",
+      "code": "def unique_chars(text): return ''.join(set(text))",
+      "description": "Extract unique characters from text",
+      "result": "unique_chars('mississippi') -> 'misp'",
+      "coolness": 85
+    },
+    {
+      "name": "Set Operations",
+      "code": "engineers = {'Alice', 'Bob', 'Charlie'}; managers = {'Bob', 'Diana'}; engineers & managers",
+      "description": "Find people who are both engineers and managers",
+      "result": "{'Bob'}",
+      "coolness": 92
+    },
+    {
+      "name": "Removing Duplicates While Preserving Order",
+      "code": "def unique_ordered(items): return list(dict.fromkeys(items))",
+      "description": "Remove duplicates while keeping original order",
+      "result": "unique_ordered([1, 3, 2, 1, 5, 2]) -> [1, 3, 2, 5]",
+      "coolness": 95
+    },
+    {
+      "name": "Symmetric Difference",
+      "code": "group1 = {'Alice', 'Bob', 'Charlie'}; group2 = {'Bob', 'Charlie', 'Diana'}; group1 ^ group2",
+      "description": "Find elements in either set but not both",
+      "result": "{'Alice', 'Diana'}",
+      "coolness": 88
+    }
+  ],
+  "dictionaries": [
+    {
+      "name": "Dictionary Comprehension",
+      "code": "{x: x**2 for x in range(6)}",
+      "description": "Create a dictionary of numbers and their squares",
+      "result": "{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25}",
+      "coolness": 92
+    },
+    {
+      "name": "Default Dictionary",
+      "code": "from collections import defaultdict; word_count = defaultdict(int); for word in ['a', 'b', 'a']: word_count[word] += 1",
+      "description": "Count occurrences without checking if key exists",
+      "result": "defaultdict(<class 'int'>, {'a': 2, 'b': 1})",
+      "coolness": 95
+    },
+    {
+      "name": "Dictionary Merging",
+      "code": "dict1 = {'a': 1, 'b': 2}; dict2 = {'b': 3, 'c': 4}; {**dict1, **dict2}",
+      "description": "Merge dictionaries with unpacking (Python 3.5+)",
+      "result": "{'a': 1, 'b': 3, 'c': 4}",
+      "coolness": 90
+    },
+    {
+      "name": "Dictionary Get with Default",
+      "code": "user_prefs = {'theme': 'dark'}; user_prefs.get('font_size', 12)",
+      "description": "Get value with fallback if key doesn't exist",
+      "result": "12",
+      "coolness": 85
+    },
+    {
+      "name": "Dictionary Sorting",
+      "code": "scores = {'Alice': 85, 'Bob': 92, 'Charlie': 78}; sorted(scores.items(), key=lambda x: x[1], reverse=True)",
+      "description": "Sort dictionary by values in descending order",
+      "result": "[('Bob', 92), ('Alice', 85), ('Charlie', 78)]",
+      "coolness": 88
+    }
+  ]
+}

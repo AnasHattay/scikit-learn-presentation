@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .code-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .example-box {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .data-structure-tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin: 2px;
+    }
+    .list-tag {
+      background-color: rgba(18, 55, 122, 0.1);
+      color: #12377A;
+    }
+    .tuple-tag {
+      background-color: rgba(54, 162, 235, 0.1);
+      color: rgba(54, 162, 235, 1);
+    }
+    .set-tag {
+      background-color: rgba(75, 192, 192, 0.1);
+      color: rgba(75, 192, 192, 1);
+    }
+    .dict-tag {
+      background-color: rgba(153, 102, 255, 0.1);
+      color: rgba(153, 102, 255, 1);
+    }
+    .success-box {
+      background-color: rgba(40, 167, 69, 0.1);
+      border-left: 4px solid #28a745;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .warning-box {
+      background-color: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+    
+    /* Memory Illustration Styles */
+    .memory-illustration {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+      animation: fadeInUp 0.8s ease-out;
+    }
+    
+    .memory-title {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .list-array-container {
+      flex: 1;
+      animation: slideInLeft 1s ease-out;
+    }
+    
+    .memory-objects-container {
+      flex: 1;
+      animation: slideInRight 1.2s ease-out;
+    }
+    
+    .list-array {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .array-cell {
+      display: flex;
+      align-items: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      animation: glow 3s infinite;
+      transition: all 0.3s ease;
+    }
+    
+    .array-cell:hover {
+      transform: scale(1.05);
+      background: rgba(18, 55, 122, 0.2);
+    }
+    
+    .array-index {
+      background: #12377A;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .array-value {
+      color: #12377A;
+      font-weight: 600;
+    }
+    
+    .arrows-container {
+      position: relative;
+      width: 60px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+    
+    .arrow {
+      font-size: 24px;
+      color: #12377A;
+      font-weight: bold;
+      animation: arrowFlow 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(18, 55, 122, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(18, 55, 122, 0.6), 0 0 30px rgba(18, 55, 122, 0.4);
+      }
+    }
+    
+    @keyframes memoryGlow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(34, 197, 94, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.4);
+      }
+    }
+    
+    @keyframes arrowFlow {
+      0% {
+        transform: translateX(-10px);
+        opacity: 0.5;
+      }
+      50% {
+        transform: translateX(0px);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(10px);
+        opacity: 0.5;
+      }
+    }
+    
+    .memory-objects {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .memory-object {
+      background: rgba(34, 197, 94, 0.1);
+      border: 2px solid #22c55e;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      animation: memoryGlow 4s infinite;
+      transition: all 0.3s ease;
+    }
+    
+    .memory-object:hover {
+      transform: scale(1.05);
+      background: rgba(34, 197, 94, 0.2);
+    }
+    
+    .object-address {
+      background: #22c55e;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+      font-weight: bold;
+      font-size: 10px;
+    }
+    
+    .object-content {
+      color: #22c55e;
+      font-weight: 600;
+    }
+    
+    .explanation-box {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(18, 55, 122, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      animation: fadeInUp 1s ease-out 2s both;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Lists: The BEST Container</h1>
+    
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h2 class="subtitle mb-4">Basic Examples</h2>
+        
+        <div class="example-box">
+          <h3 class="highlight text-lg mb-3">List containing different data structures</h3>
+          <div class="code-example">
+# A list containing everything!
+mixed_list = [
+    42,                           # int
+    "hello",                      # string
+    [1, 2, 3],                   # list
+    (4, 5, 6),                   # tuple
+    {7, 8, 9},                   # set
+    {'key': 'value'},            # dictionary
+    True,                        # boolean
+    3.14                         # float
+]
+
+# Check the list properties
+print(f"Length: {len(mixed_list)}")
+
+# Get the type of each item
+types_list = [type(item).__name__ for item in mixed_list]
+print(f"Types: {types_list}")
+          </div>
+          
+          <div class="body-text">
+            <p><strong>Output:</strong></p>
+            <div class="code-example">
+Length: 8
+
+Types: ['int', 'str', 'list', 'tuple', 'set', 'dict', 'bool', 'float']
+            </div>
+          </div>
+        </div>
+        
+        <div class="example-box">
+          <h3 class="highlight text-lg mb-3">Nested Lists (Lists of Lists)</h3>
+          <div class="code-example">
+# 2D matrix using nested lists
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+# Access element: row 1, column 2
+print(matrix[1][2])
+
+# Modify nested list
+matrix[0].append(10)
+print(matrix[0])
+          </div>
+          <div class="body-text">
+            <p><strong>Output:</strong></p>
+            <div class="code-example">
+6
+
+[1, 2, 3, 10]
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">Memory Illustration</h2>
+        <p class="body-text mb-6">How lists store references to objects in memory:</p>
+        
+        <div class="memory-illustration">
+          <!-- List Array Block -->
+          <div class="list-array-container">
+            <h3 class="memory-title">List Array</h3>
+            <div class="list-array">
+              <div class="array-cell" style="animation-delay: 0.2s;">
+                <div class="array-index">0</div>
+                <div class="array-value">ref → @0x1001</div>
+              </div>
+              <div class="array-cell" style="animation-delay: 0.4s;">
+                <div class="array-index">1</div>
+                <div class="array-value">ref → @0x1002</div>
+              </div>
+              <div class="array-cell" style="animation-delay: 0.6s;">
+                <div class="array-index">2</div>
+                <div class="array-value">ref → @0x1003</div>
+              </div>
+              <div class="array-cell" style="animation-delay: 0.8s;">
+                <div class="array-index">3</div>
+                <div class="array-value">ref → @0x1004</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Arrows -->
+          <div class="arrows-container">
+            <div class="arrow" style="top: 20px; animation-delay: 1s;">→</div>
+            <div class="arrow" style="top: 70px; animation-delay: 1.2s;">→</div>
+            <div class="arrow" style="top: 120px; animation-delay: 1.4s;">→</div>
+            <div class="arrow" style="top: 170px; animation-delay: 1.6s;">→</div>
+          </div>
+          
+          <!-- Memory Objects Block -->
+          <div class="memory-objects-container">
+            <h3 class="memory-title">Memory Objects</h3>
+            <div class="memory-objects">
+              <div class="memory-object" style="animation-delay: 1.2s;">
+                <div class="object-address">@0x1001</div>
+                <div class="object-content">42 (int)</div>
+              </div>
+              <div class="memory-object" style="animation-delay: 1.4s;">
+                <div class="object-address">@0x1002</div>
+                <div class="object-content">"hello" (str)</div>
+              </div>
+              <div class="memory-object" style="animation-delay: 1.6s;">
+                <div class="object-address">@0x1003</div>
+                <div class="object-content">[1, 2, 3] (list)</div>
+              </div>
+              <div class="memory-object" style="animation-delay: 1.8s;">
+                <div class="object-address">@0x1004</div>
+                <div class="object-content">{'a': 1} (dict)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="explanation-box mt-6">
+          <p class="body-text text-center">
+            The list doesn't store the actual objects, only <span class="highlight">references</span> to their memory locations.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="warning-box mt-6">
+      <p class="body-text"><strong>Important:</strong> When lists contain mutable objects (other lists, sets, dicts), changes to those objects will be reflected everywhere they're referenced. </p>
+    </div>
+  </div>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

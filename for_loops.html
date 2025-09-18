@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+    .code-block {
+      background-color: rgba(18, 55, 122, 0.05);
+      border-left: 4px solid #12377A;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      margin: 12px 0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 500;
+    }
+    .example-box {
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(18, 55, 122, 0.2);
+      transition: all 0.3s ease;
+    }
+    .example-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(18, 55, 122, 0.1);
+      border-color: rgba(18, 55, 122, 0.5);
+    }
+    .example-title {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .output {
+      color: #22c55e;
+      font-style: italic;
+      margin-top: 8px;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">For Loops: Iterating Through Data</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h2 class="subtitle mb-4">Basic For Loop Syntax</h2>
+        
+        <div class="example-box">
+          <div class="example-title">Simple Range Loop</div>
+          <div class="code-block">for i in range(5):
+    print(f"Iteration {i}")</div>
+          <div class="output">Output: Iteration 0, 1, 2, 3, 4</div>
+        </div>
+        
+        <div class="example-box">
+          <div class="example-title">Iterating Over a List</div>
+          <div class="code-block">fruits = ['apple', 'banana', 'cherry']
+for fruit in fruits:
+    print(f"I love {fruit}!")</div>
+          <div class="output">Output: I love apple! I love banana! I love cherry!</div>
+        </div>
+        
+        <div class="example-box">
+          <div class="example-title">Using enumerate() for Index + Value</div>
+          <div class="code-block">colors = ['red', 'green', 'blue']
+for index, color in enumerate(colors):
+    print(f"{index}: {color}")</div>
+          <div class="output">Output: 0: red, 1: green, 2: blue</div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">Advanced For Loop Patterns</h2>
+        
+        <div class="example-box">
+          <div class="example-title">Iterating Over Dictionary</div>
+          <div class="code-block">student_grades = {'Alice': 95, 'Bob': 87, 'Charlie': 92}
+
+# Keys only
+for name in student_grades:
+    print(name)
+
+# Key-value pairs
+for name, grade in student_grades.items():
+    print(f"{name}: {grade}")</div>
+          <div class="output">Output: Alice: 95, Bob: 87, Charlie: 92</div>
+        </div>
+        
+        <div class="example-box">
+          <div class="example-title">Nested Loops</div>
+          <div class="code-block">matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+for row in matrix:
+    for element in row:
+        print(element, end=' ')
+    print()  # New line after each row</div>
+          <div class="output">Output: 1 2 3<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4 5 6<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7 8 9</div>
+        </div>
+        
+        <div class="example-box">
+          <div class="example-title">Using zip() for Multiple Lists</div>
+          <div class="code-block">names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+cities = ['NYC', 'LA', 'Chicago']
+
+for name, age, city in zip(names, ages, cities):
+    print(f"{name}, {age}, lives in {city}")</div>
+          <div class="output">Output: Alice, 25, lives in NYC</div>
+        </div>
+      </div>
+    </div>
+    
+
+
+  </div>
+
+  <script>
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>

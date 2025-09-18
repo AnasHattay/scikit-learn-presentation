@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python for Data Science: Data Structures</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'SF Pro Display', sans-serif;
+      background-color: #F2F9FC;
+      color: #858481;
+    }
+    .title {
+      color: #12377A;
+      font-family: 'Inter', sans-serif;
+    }
+    .slide-link {
+      border: 1px solid rgba(18, 55, 122, 0.2);
+      transition: all 0.3s ease;
+    }
+    .slide-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(18, 55, 122, 0.1);
+      border-color: #12377A;
+    }
+    .slide-number {
+      background-color: rgba(18, 55, 122, 0.1);
+      color: #12377A;
+      font-weight: bold;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto px-4 py-8 max-w-5xl">
+    <header class="text-center mb-12">
+      <h1 class="title text-4xl font-bold mb-4">Python for Data Science: Data Structures</h1>
+      <p class="text-xl">A comprehensive guide to Python's built-in data structures for data science applications</p>
+    </header>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <h2 class="title text-2xl font-bold mb-4">Presentation Navigation</h2>
+      <p class="mb-4">Click on any slide below to view it, or navigate through the slides using the "Next" and "Previous" buttons within each slide.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <a href="intro.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">1</div>
+          <div>
+            <h3 class="title font-semibold">Introduction</h3>
+            <p class="text-sm">Overview of data structures in Python</p>
+          </div>
+        </a>
+        
+        <a href="what_are_data_structures.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">2</div>
+          <div>
+            <h3 class="title font-semibold">What Are Data Structures?</h3>
+            <p class="text-sm">Definition, purpose, and real-world applications</p>
+          </div>
+        </a>
+        
+        <a href="operations.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">3</div>
+          <div>
+            <h3 class="title font-semibold">Common Operations Syntax</h3>
+            <p class="text-sm">Syntax comparison for common operations across data structures</p>
+          </div>
+        </a>
+        
+        <a href="comparison.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">4</div>
+          <div>
+            <h3 class="title font-semibold">Data Structures Comparison</h3>
+            <p class="text-sm">Comparative overview of the main Python data structures</p>
+          </div>
+        </a>
+        
+        <a href="lists_containing_everything.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">5</div>
+          <div>
+            <h3 class="title font-semibold">Lists: The Universal Container</h3>
+            <p class="text-sm">How lists can hold any data structure as elements</p>
+          </div>
+        </a>
+        
+        <a href="mutability_examples.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">6</div>
+          <div>
+            <h3 class="title font-semibold">Mutability & Nested Data Structures</h3>
+            <p class="text-sm">Practical examples of how mutability affects nested data structures</p>
+          </div>
+        </a>
+        
+        <a href="for_loops.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">7</div>
+          <div>
+            <h3 class="title font-semibold">For Loops</h3>
+            <p class="text-sm">Iterating through data with for loops</p>
+          </div>
+        </a>
+        
+        <a href="while_loops.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">8</div>
+          <div>
+            <h3 class="title font-semibold">While Loops</h3>
+            <p class="text-sm">Conditional iteration with while loops</p>
+          </div>
+        </a>
+        
+        <a href="loop_control.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">9</div>
+          <div>
+            <h3 class="title font-semibold">Loop Control</h3>
+            <p class="text-sm">break, continue, and else clauses in loops</p>
+          </div>
+        </a>
+        
+        <a href="list_comprehensions.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">10</div>
+          <div>
+            <h3 class="title font-semibold">List Comprehensions</h3>
+            <p class="text-sm">Pythonic loops and generator expressions</p>
+          </div>
+        </a>
+        
+        <a href="loops_with_data_structures.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">11</div>
+          <div>
+            <h3 class="title font-semibold">Loops with Data Structures</h3>
+            <p class="text-sm">How loops work with lists, dicts, sets, and tuples</p>
+          </div>
+        </a>
+        
+        <a href="lets_code.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">12</div>
+          <div>
+            <h3 class="title font-semibold">Enough, let's code!</h3>
+            <p class="text-sm">Time to put theory into practice</p>
+          </div>
+        </a>
+        
+        <a href="memory.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">13</div>
+          <div>
+            <h3 class="title font-semibold">Memory Usage</h3>
+            <p class="text-sm">Comparison of memory efficiency across data structures</p>
+          </div>
+        </a>
+        
+        <a href="pass_by_reference.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">14</div>
+          <div>
+            <h3 class="title font-semibold">Pass by Value vs Reference</h3>
+            <p class="text-sm">Understanding memory management concepts in Python</p>
+          </div>
+        </a>
+        
+        <a href="conclusion.html" class="slide-link bg-white rounded-lg p-4 flex items-center">
+          <div class="slide-number mr-3">15</div>
+          <div>
+            <h3 class="title font-semibold">Conclusion</h3>
+            <p class="text-sm">Summary and additional resources</p>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="title text-2xl font-bold mb-4">How to Use This Presentation</h2>
+      <ol class="list-decimal pl-6 space-y-2">
+        <li>Click on any slide in the navigation above to view that slide</li>
+        <li>Use the navigation buttons at the bottom of each slide to move between slides</li>
+        <li>All visualizations are interactive - hover over charts for more information</li>
+        <li>The presentation works best in modern browsers (Chrome, Firefox, Safari, Edge)</li>
+        <li>Internet connection is required for some features (fonts, chart libraries)</li>
+      </ol>
+      
+      <div class="mt-8 text-center space-x-4">
+        <a href="presentation_viewer.html" class="bg-[#12377A] text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all">Start Presentation (Fullscreen Friendly)</a>
+        <a href="intro.html" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all">Browse Individual Slides</a>
+      </div>
+    </div>
+    
+    <footer class="mt-12 text-center text-sm text-gray-500">
+      <p>Python for Data Science: Data Structures</p>
+      <p>École Polytechnique</p>
+    </footer>
+  </div>
+</body>
+</html>

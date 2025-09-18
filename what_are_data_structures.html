@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .definition-box {
+      background-color: rgba(18, 55, 122, 0.05);
+      border-left: 4px solid #12377A;
+      padding: 24px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .example-box {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      padding: 12px;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .benefit-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-size: 18px;
+    }
+    .efficiency-icon {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+    .organization-icon {
+      background-color: rgba(18, 55, 122, 0.1);
+      color: #12377A;
+    }
+    .performance-icon {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+    }
+    .flexibility-icon {
+      background-color: rgba(153, 102, 255, 0.1);
+      color: rgba(153, 102, 255, 1);
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">What Are Data Structures?</h1>
+    
+    <div class="max-w-full">
+      <div class="definition-box mb-8">
+        <h2 class="subtitle mb-4">Definition</h2>
+        <p class="body-text">A <span class="highlight">data structure</span> is a way of organizing and storing data in a computer so that it can be accessed and modified efficiently.</p>
+      </div>
+      
+      <div class="example-box">
+        <h3 class="highlight text-xl mb-3">Without Data Structures</h3>
+        <p class="body-text">Imagine trying to manage 1000 student records using only individual variables:</p>
+        <div style="background-color: #f8f9fa; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 14px; margin: 8px 0;">
+student1_name = "Alice"<br>
+student1_grade = 95<br>
+student2_name = "Bob"<br>
+student2_grade = 87<br>
+# ... 998 more students? 😱
+        </div>
+        <p class="body-text text-sm mt-2"><strong>Problems:</strong> Unmanageable, repetitive, hard to search, impossible to scale!</p>
+      </div>
+    </div>
+    
+    <div class="mt-8">
+      <div class="example-box">
+        <h2 class="subtitle mb-6">With Data Structures: The Python Way</h2>
+        
+        <div class="mb-6">
+          <h4 class="highlight mb-3 text-xl">Problem: Store student information</h4>
+          <div style="background-color: #f8f9fa; padding: 16px; border-radius: 4px; font-family: monospace; font-size: 16px; max-width: 600px;">
+# Using a list of dictionaries<br>
+students = [<br>
+&nbsp;&nbsp;{'name': 'Alice', 'grade': 95, 'major': 'CS'},<br>
+&nbsp;&nbsp;{'name': 'Bob', 'grade': 87, 'major': 'Math'},<br>
+&nbsp;&nbsp;{'name': 'Carol', 'grade': 92, 'major': 'Physics'}<br>
+]
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="highlight mb-4 text-xl">Benefits achieved:</h4>
+          <div class="grid grid-cols-2 gap-8">
+            <div>
+              <ul class="body-text space-y-3">
+                <li>&#x2713; <strong>Scalable:</strong> Add thousands of students easily</li>
+                <li>&#x2713; <strong>Searchable:</strong> Find students by any criteria</li>
+                <li>&#x2713; <strong>Organized:</strong> Clear structure for each student</li>
+              </ul>
+            </div>
+            <div>
+              <ul class="body-text space-y-3">
+                <li>&#x2713; <strong>Flexible:</strong> Easy to add new fields</li>
+                <li>&#x2713; <strong>Efficient:</strong> Fast operations on the data</li>
+                <li>&#x2713; <strong>Maintainable:</strong> Clean, readable code</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+    .complexity-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .complexity-table th, .complexity-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .complexity-table th {
+      background-color: rgba(18, 55, 122, 0.1);
+      color: #12377A;
+    }
+    .complexity-table tr:nth-child(even) {
+      background-color: rgba(242, 249, 252, 0.5);
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Performance Characteristics</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <div style="height: 500px;">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="body-text">
+        <h2 class="subtitle mb-4">Time Complexity</h2>
+        <p class="mb-4">Understanding the performance characteristics of each data structure is crucial for efficient algorithm design:</p>
+        
+        <table class="complexity-table mt-6">
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>List</th>
+              <th>Tuple</th>
+              <th>Set</th>
+              <th>Dictionary</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Access</td>
+              <td>O(1)</td>
+              <td>O(1)</td>
+              <td>N/A</td>
+              <td>O(1)</td>
+            </tr>
+            <tr>
+              <td>Search</td>
+              <td>O(n)</td>
+              <td>O(n)</td>
+              <td>O(1)</td>
+              <td>O(1)</td>
+            </tr>
+            <tr>
+              <td>Insertion</td>
+              <td>O(n)</td>
+              <td>N/A</td>
+              <td>O(1)</td>
+              <td>O(1)</td>
+            </tr>
+            <tr>
+              <td>Deletion</td>
+              <td>O(n)</td>
+              <td>N/A</td>
+              <td>O(1)</td>
+              <td>O(1)</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <p class="mt-6">The chart shows relative performance speed for common operations across data structures. Dictionaries and sets excel at search, insertion, and deletion due to their hash-based implementation.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch the performance data
+    fetch('data/performance_data.json')
+      .then(response => response.json())
+      .then(data => {
+        // Prepare data for Chart.js
+        const operations = data.operations;
+        const listData = data.list.map(item => item.relative_speed);
+        const tupleData = data.tuple.map(item => item.relative_speed);
+        const setData = data.set.map(item => item.relative_speed);
+        const dictData = data.dict.map(item => item.relative_speed);
+        
+        // Create the chart
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: operations,
+            datasets: [
+              {
+                label: 'List',
+                data: listData,
+                backgroundColor: 'rgba(18, 55, 122, 0.7)',
+                borderColor: 'rgba(18, 55, 122, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Tuple',
+                data: tupleData,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Set',
+                data: setData,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Dictionary',
+                data: dictData,
+                backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Relative Performance (higher is better)',
+                  font: {
+                    family: "'SF Pro Display', sans-serif"
+                  }
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Operations',
+                  font: {
+                    family: "'SF Pro Display', sans-serif"
+                  }
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  font: {
+                    family: "'SF Pro Display', sans-serif",
+                    size: 14
+                  }
+                }
+              },
+              title: {
+                display: true,
+                text: 'Performance Comparison by Operation',
+                font: {
+                  family: "'Inter', sans-serif",
+                  size: 16
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.dataset.label}: ${context.raw} (relative speed)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error loading performance data:', error);
+        document.getElementById('performanceChart').innerHTML = 'Error loading chart data';
+      });
+  </script>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

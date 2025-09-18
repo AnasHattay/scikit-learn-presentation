@@ -1,0 +1,130 @@
+{
+  "lists": [
+    {
+      "application": "Time Series Data",
+      "example": "Stock price history tracking",
+      "description": "Ordered sequence of price points over time",
+      "popularity": 85
+    },
+    {
+      "application": "Natural Language Processing",
+      "example": "Tokenized sentences in text analysis",
+      "description": "Maintaining word order in sentences",
+      "popularity": 90
+    },
+    {
+      "application": "Image Processing",
+      "example": "Pixel matrices in computer vision",
+      "description": "2D arrays for image manipulation",
+      "popularity": 80
+    },
+    {
+      "application": "Web Scraping",
+      "example": "Collecting search results",
+      "description": "Storing scraped elements in order",
+      "popularity": 75
+    },
+    {
+      "application": "Machine Learning",
+      "example": "Feature vectors for models",
+      "description": "Ordered input features for algorithms",
+      "popularity": 95
+    }
+  ],
+  "tuples": [
+    {
+      "application": "Geographic Coordinates",
+      "example": "GPS location tracking",
+      "description": "Immutable (latitude, longitude) pairs",
+      "popularity": 80
+    },
+    {
+      "application": "RGB Color Values",
+      "example": "Digital image processing",
+      "description": "Fixed (red, green, blue) color components",
+      "popularity": 75
+    },
+    {
+      "application": "Database Records",
+      "example": "SQL query results",
+      "description": "Fixed-structure data rows",
+      "popularity": 90
+    },
+    {
+      "application": "Function Returns",
+      "example": "Multiple return values",
+      "description": "Returning several values as one unit",
+      "popularity": 95
+    },
+    {
+      "application": "Graph Edges",
+      "example": "Network analysis",
+      "description": "Immutable (source, destination) connections",
+      "popularity": 70
+    }
+  ],
+  "sets": [
+    {
+      "application": "Removing Duplicates",
+      "example": "Unique user IDs in analytics",
+      "description": "Ensuring each user is counted once",
+      "popularity": 95
+    },
+    {
+      "application": "Membership Testing",
+      "example": "Checking permissions",
+      "description": "Fast lookup for access control",
+      "popularity": 85
+    },
+    {
+      "application": "Network Analysis",
+      "example": "Finding common connections",
+      "description": "Intersection of friend networks",
+      "popularity": 75
+    },
+    {
+      "application": "Recommendation Systems",
+      "example": "Content filtering",
+      "description": "Finding unique item categories",
+      "popularity": 80
+    },
+    {
+      "application": "Natural Language Processing",
+      "example": "Unique vocabulary extraction",
+      "description": "Creating dictionaries from text",
+      "popularity": 90
+    }
+  ],
+  "dictionaries": [
+    {
+      "application": "JSON Data Processing",
+      "example": "API responses",
+      "description": "Mapping keys to values in web data",
+      "popularity": 95
+    },
+    {
+      "application": "Frequency Counting",
+      "example": "Word frequency in text analysis",
+      "description": "Mapping items to their counts",
+      "popularity": 90
+    },
+    {
+      "application": "Caching",
+      "example": "Memoization in algorithms",
+      "description": "Storing computed results by input",
+      "popularity": 85
+    },
+    {
+      "application": "Configuration Settings",
+      "example": "Application parameters",
+      "description": "Named settings with values",
+      "popularity": 80
+    },
+    {
+      "application": "Graph Representation",
+      "example": "Adjacency lists",
+      "description": "Mapping nodes to their connections",
+      "popularity": 75
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "data_structures": ["List", "Tuple", "Set", "Dictionary"],
+  "memory_usage": [
+    {
+      "structure": "List",
+      "small_dataset": 100,
+      "medium_dataset": 220,
+      "large_dataset": 450
+    },
+    {
+      "structure": "Tuple",
+      "small_dataset": 80,
+      "medium_dataset": 180,
+      "large_dataset": 380
+    },
+    {
+      "structure": "Set",
+      "small_dataset": 200,
+      "medium_dataset": 320,
+      "large_dataset": 580
+    },
+    {
+      "structure": "Dictionary",
+      "small_dataset": 240,
+      "medium_dataset": 380,
+      "large_dataset": 650
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <style>
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;      width: 100vw;
+      min-height: 100vh;
+      background: #FFFFFF;
+      color: #333333;
+      font-family: 'Arial', sans-serif;
+    }
+    .title {
+      color: #000000;
+      font-size: 36px;
+      font-weight: bold;
+    }
+    .subtitle {
+      color: #000000;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .accent {
+      color: #CC0000;
+    }
+    .hierarchy-box {
+      border: 2px solid #CC0000;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">Data Structure Hierarchy</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <div class="mb-6">
+          <img src="images/u54GkzLUDAqo.png" alt="Hierarchy of Python data structures" class="max-h-96">
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">When to Use Each Data Structure</h2>
+        
+        <div class="hierarchy-box mb-4">
+          <h3 class="font-bold accent">Lists</h3>
+          <p>Use when:</p>
+          <ul class="list-disc list-inside">
+            <li>Order matters</li>
+            <li>You need to modify the collection</li>
+            <li>You need indexed access</li>
+            <li>Duplicates are allowed</li>
+          </ul>
+        </div>
+        
+        <div class="hierarchy-box mb-4">
+          <h3 class="font-bold accent">Tuples</h3>
+          <p>Use when:</p>
+          <ul class="list-disc list-inside">
+            <li>Data should be immutable</li>
+            <li>Returning multiple values from functions</li>
+            <li>Using as dictionary keys (lists can't be used)</li>
+            <li>Slightly more memory efficient than lists</li>
+          </ul>
+        </div>
+        
+        <div class="hierarchy-box mb-4">
+          <h3 class="font-bold accent">Sets</h3>
+          <p>Use when:</p>
+          <ul class="list-disc list-inside">
+            <li>You need unique values</li>
+            <li>Testing membership is a frequent operation</li>
+            <li>You need set operations (union, intersection)</li>
+            <li>Order doesn't matter</li>
+          </ul>
+        </div>
+        
+        <div class="hierarchy-box">
+          <h3 class="font-bold accent">Dictionaries</h3>
+          <p>Use when:</p>
+          <ul class="list-disc list-inside">
+            <li>You need key-value associations</li>
+            <li>Fast lookups by key are required</li>
+            <li>Values need to be updated frequently</li>
+            <li>You need to represent structured data</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script></body>
+</html>

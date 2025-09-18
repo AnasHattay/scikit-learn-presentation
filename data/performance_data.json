@@ -1,0 +1,27 @@
+{
+  "operations": ["Access", "Search", "Insertion", "Deletion"],
+  "list": [
+    {"operation": "Access", "time_complexity": "O(1)", "relative_speed": 95},
+    {"operation": "Search", "time_complexity": "O(n)", "relative_speed": 60},
+    {"operation": "Insertion", "time_complexity": "O(n)", "relative_speed": 70},
+    {"operation": "Deletion", "time_complexity": "O(n)", "relative_speed": 65}
+  ],
+  "tuple": [
+    {"operation": "Access", "time_complexity": "O(1)", "relative_speed": 100},
+    {"operation": "Search", "time_complexity": "O(n)", "relative_speed": 65},
+    {"operation": "Insertion", "time_complexity": "N/A", "relative_speed": 0},
+    {"operation": "Deletion", "time_complexity": "N/A", "relative_speed": 0}
+  ],
+  "set": [
+    {"operation": "Access", "time_complexity": "N/A", "relative_speed": 0},
+    {"operation": "Search", "time_complexity": "O(1)", "relative_speed": 95},
+    {"operation": "Insertion", "time_complexity": "O(1)", "relative_speed": 90},
+    {"operation": "Deletion", "time_complexity": "O(1)", "relative_speed": 90}
+  ],
+  "dict": [
+    {"operation": "Access", "time_complexity": "O(1)", "relative_speed": 98},
+    {"operation": "Search", "time_complexity": "O(1)", "relative_speed": 98},
+    {"operation": "Insertion", "time_complexity": "O(1)", "relative_speed": 95},
+    {"operation": "Deletion", "time_complexity": "O(1)", "relative_speed": 95}
+  ]
+}
