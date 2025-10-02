@@ -441,6 +441,70 @@
       color: #12377A;
       font-style: italic;
     }
+    .rules-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .rule-item {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #12377A;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .rule-item:hover {
+      transform: translateX(5px);
+    }
+    .rule-number {
+      background: #12377A;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+    .rule-text {
+      font-size: 16px;
+      color: #12377A;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .practice-questions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .question-item {
+      background: rgba(18, 55, 122, 0.05);
+      border-radius: 10px;
+      padding: 18px;
+      border-left: 4px solid #28a745;
+      transition: all 0.3s ease;
+    }
+    .question-item:hover {
+      background: rgba(18, 55, 122, 0.1);
+      transform: translateX(3px);
+    }
+    .question-text {
+      font-size: 16px;
+      color: #12377A;
+      font-weight: 500;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -710,6 +774,41 @@ print(result[0, 0, :])  # Show first row of first slice</textarea>
           <div class="output" id="broadcast3dOutput">Click "Run Code" to execute the 3D broadcasting example</div>
         </div>
         
+      </div>
+    </div>
+    
+    <!-- Broadcasting Rules Section -->
+    <div class="mt-8">
+      <h2 class="subtitle mb-4 text-center">Broadcasting Rules</h2>
+      <div class="rules-container">
+        <div class="rule-item">
+          <div class="rule-number">1</div>
+          <div class="rule-text">Start from the right (last dimension)</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-number">2</div>
+          <div class="rule-text">Dimensions must be equal OR one must be 1</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-number">3</div>
+          <div class="rule-text">Missing dimensions are treated as 1</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Practice Questions Section -->
+    <div class="mt-8">
+      <h2 class="subtitle mb-4 text-center">It's Your Turn!</h2>
+      <div class="practice-questions">
+        <div class="question-item">
+          <div class="question-text">Can you broadcast a (3,) array with a (2,3) array?</div>
+        </div>
+        <div class="question-item">
+          <div class="question-text">What about (4,1) with (4,3)?</div>
+        </div>
+        <div class="question-item">
+          <div class="question-text">What happens with (2,3) and (3,2)?</div>
+        </div>
       </div>
     </div>
   </div>
