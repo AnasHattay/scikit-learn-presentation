@@ -1,0 +1,17 @@
+{
+  "name": "python-data-structures-pdf-generator",
+  "version": "1.0.0",
+  "description": "Generate PDF from HTML presentation slides",
+  "main": "generate_pdf.js",
+  "scripts": {
+    "generate-pdf": "node generate_pdf.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {},
+  "keywords": ["pdf", "presentation", "puppeteer"],
+  "author": "",
+  "license": "MIT"
+}

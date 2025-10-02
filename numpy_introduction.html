@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .code-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      margin: 12px 0;
+      overflow-x: auto;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .comparison-box {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .python-lists {
+      border-left: 5px solid #dc3545;
+    }
+    .numpy-arrays {
+      border-left: 5px solid #28a745;
+    }
+    .comparison-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-family: 'Inter', sans-serif;
+    }
+    .python-lists .comparison-title {
+      color: #dc3545;
+    }
+    .numpy-arrays .comparison-title {
+      color: #28a745;
+    }
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .feature-list li::before {
+      content: "•";
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .python-lists .feature-list li::before {
+      color: #dc3545;
+    }
+    .numpy-arrays .feature-list li::before {
+      color: #28a745;
+    }
+    .interactive-code {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .code-editor {
+      width: 100%;
+      min-height: 120px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      resize: vertical;
+      background: #fff;
+    }
+    .run-button {
+      background: #12377A;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+    }
+    .run-button:hover {
+      background: #1e4a8c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .output {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      min-height: 50px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .loading {
+      color: #12377A;
+      font-style: italic;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #12377A;
+      font-family: 'Inter', sans-serif;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #858481;
+      margin-top: 5px;
+    }
+    .array-visualization {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .array-title {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+    }
+    .array-visual {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .array-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 60px;
+      animation: glow 2s infinite;
+    }
+    .array-index {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .array-value {
+      font-size: 16px;
+    }
+    .array-2d {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+    }
+    .array-2d-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #12377A;
+      min-height: 60px;
+      animation: glow 2s infinite;
+    }
+    .array-2d-index {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .array-2d-value {
+      font-size: 14px;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(18, 55, 122, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(18, 55, 122, 0.6); }
+    }
+    .array-example {
+      text-align: center;
+    }
+    .array-description {
+      margin-top: 10px;
+      color: #858481;
+      font-size: 14px;
+    }
+    .array-3d {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .array-3d-layer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .array-3d-title {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+    }
+    .array-3d-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+    }
+    .array-3d-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 30px;
+      min-height: 30px;
+      animation: glow 2s infinite;
+    }
+    .vector-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .vector-index-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .index-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .index-number {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+    .vector-values {
+      display: flex;
+      gap: 8px;
+    }
+    .vector-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 50px;
+      min-height: 50px;
+      animation: glow 2s infinite;
+    }
+    .vector-value {
+      font-size: 18px;
+    }
+    .matrix-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .matrix-coordinates {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .coordinate-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .coordinate-col {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .coord-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      min-width: 30px;
+      text-align: center;
+    }
+    .coord-numbers {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .matrix-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 60px;
+      min-height: 60px;
+      animation: glow 2s infinite;
+    }
+    .cell-value {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .cell-coords {
+      font-size: 10px;
+      color: #666;
+    }
+    .tensor-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tensor-layer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .layer-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+    }
+    .layer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+    .tensor-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 40px;
+      min-height: 40px;
+      animation: glow 2s infinite;
+    }
+    .tensor-value {
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .tensor-coords {
+      font-size: 8px;
+      color: #666;
+    }
+    .problem-illustration {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .illustration-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #12377A;
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    .illustration-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .dataset {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .dataset-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #12377A;
+      font-family: 'Inter', sans-serif;
+    }
+    .dataset-visual {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .data-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 40px;
+      min-height: 30px;
+      animation: glow 2s infinite;
+    }
+    .plus-sign, .equals-sign {
+      font-size: 24px;
+      font-weight: bold;
+      color: #12377A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">What is NumPy?</h1>
+    
+    <div class="body-text mb-6">
+      <p><span class="highlight">NumPy</span> (Numerical Python) is the fundamental package for scientific computing in Python. It provides powerful N-dimensional array objects and tools for working with these arrays.</p>
+    </div>
+
+    <div class="body-text mb-6">
+      <h2 class="subtitle mb-4">NumPy Arrays</h2>
+      
+      <div class="grid grid-cols-3 gap-6">
+        <div class="array-example">
+          <h3 class="subtitle mb-3">1D Array</h3>
+          <div class="array-visualization">
+            <div class="array-title">Vector</div>
+            <div class="vector-container">
+              <div class="vector-index-row">
+                <div class="index-label">Index</div>
+                <div class="index-number">0</div>
+                <div class="index-number">1</div>
+                <div class="index-number">2</div>
+                <div class="index-number">3</div>
+              </div>
+              <div class="vector-values">
+                <div class="vector-cell">
+                  <div class="vector-value">1</div>
+                </div>
+                <div class="vector-cell">
+                  <div class="vector-value">2</div>
+                </div>
+                <div class="vector-cell">
+                  <div class="vector-value">3</div>
+                </div>
+                <div class="vector-cell">
+                  <div class="vector-value">4</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="array-description">
+            <p class="text-sm">One-dimensional array<br/>Shape: (4,)</p>
+          </div>
+        </div>
+        
+        <div class="array-example">
+          <h3 class="subtitle mb-3">2D Array</h3>
+          <div class="array-visualization">
+            <div class="array-title">Matrix</div>
+            <div class="matrix-container">
+              <div class="matrix-coordinates">
+                <div class="coordinate-row">
+                  <div class="coord-label">Row</div>
+                  <div class="coord-numbers">0</div>
+                  <div class="coord-numbers">1</div>
+                </div>
+                <div class="matrix-grid">
+                  <div class="matrix-cell">
+                    <div class="cell-value">1</div>
+                    <div class="cell-coords">(0,0)</div>
+                  </div>
+                  <div class="matrix-cell">
+                    <div class="cell-value">2</div>
+                    <div class="cell-coords">(0,1)</div>
+                  </div>
+                  <div class="matrix-cell">
+                    <div class="cell-value">3</div>
+                    <div class="cell-coords">(1,0)</div>
+                  </div>
+                  <div class="matrix-cell">
+                    <div class="cell-value">4</div>
+                    <div class="cell-coords">(1,1)</div>
+                  </div>
+                </div>
+                <div class="coordinate-col">
+                  <div class="coord-label">Col</div>
+                  <div class="coord-numbers">0</div>
+                  <div class="coord-numbers">1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="array-description">
+            <p class="text-sm">Two-dimensional array<br/>Shape: (2, 2)</p>
+          </div>
+        </div>
+        
+        <div class="array-example">
+          <h3 class="subtitle mb-3">3D Array</h3>
+          <div class="array-visualization">
+            <div class="array-title">Tensor</div>
+            <div class="tensor-container">
+              <div class="tensor-layer">
+                <div class="layer-label">Layer 0</div>
+                <div class="layer-grid">
+                  <div class="tensor-cell">
+                    <div class="tensor-value">1</div>
+                    <div class="tensor-coords">(0,0,0)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">2</div>
+                    <div class="tensor-coords">(0,0,1)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">3</div>
+                    <div class="tensor-coords">(0,1,0)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">4</div>
+                    <div class="tensor-coords">(0,1,1)</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tensor-layer">
+                <div class="layer-label">Layer 1</div>
+                <div class="layer-grid">
+                  <div class="tensor-cell">
+                    <div class="tensor-value">5</div>
+                    <div class="tensor-coords">(1,0,0)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">6</div>
+                    <div class="tensor-coords">(1,0,1)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">7</div>
+                    <div class="tensor-coords">(1,1,0)</div>
+                  </div>
+                  <div class="tensor-cell">
+                    <div class="tensor-value">8</div>
+                    <div class="tensor-coords">(1,1,1)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="array-description">
+            <p class="text-sm">Three-dimensional array<br/>Shape: (2, 2, 2)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <h2 class="subtitle mb-4">Why We Don't Use Lists?</h2>
+    
+    <div class="body-text mb-6">
+      <p>Let's say we want to add two large datasets - each containing 100,000 numbers from 0 to 99,999. How would we do this with Python lists vs NumPy arrays?</p>
+    </div>
+
+    <!-- Illustration of the problem -->
+    <div class="problem-illustration">
+      <div class="illustration-title">The Problem: Adding Two Large Datasets</div>
+      <div class="illustration-content">
+        <div class="dataset">
+          <div class="dataset-label">Dataset 1</div>
+          <div class="dataset-visual">
+            <div class="data-cell">0</div>
+            <div class="data-cell">1</div>
+            <div class="data-cell">2</div>
+            <div class="data-cell">...</div>
+            <div class="data-cell">99999</div>
+          </div>
+        </div>
+        <div class="plus-sign">+</div>
+        <div class="dataset">
+          <div class="dataset-label">Dataset 2</div>
+          <div class="dataset-visual">
+            <div class="data-cell">0</div>
+            <div class="data-cell">1</div>
+            <div class="data-cell">2</div>
+            <div class="data-cell">...</div>
+            <div class="data-cell">99999</div>
+          </div>
+        </div>
+        <div class="equals-sign">=</div>
+        <div class="dataset">
+          <div class="dataset-label">Result</div>
+          <div class="dataset-visual">
+            <div class="data-cell">0</div>
+            <div class="data-cell">2</div>
+            <div class="data-cell">4</div>
+            <div class="data-cell">...</div>
+            <div class="data-cell">199998</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h3 class="subtitle mb-4">Python Lists Solution</h3>
+        <div class="interactive-code">
+          <textarea class="code-editor" id="pythonCode"># Python lists - slow for large data
+import time
+
+# Create large lists
+big_list1 = list(range(100000))
+big_list2 = list(range(100000))
+
+# Add them together (manual loop)
+start = time.time()
+big_result = [a + b for a, b in zip(big_list1, big_list2)]
+end = time.time()
+
+print("Python Lists:")
+print(f"Time for 100,000 elements: {end - start:.4f} seconds")
+print(f"Result length: {len(big_result)}")
+print(f"First 5 elements: {big_result[:5]}")</textarea>
+          <button class="run-button" onclick="runPythonCode('pythonCode', 'pythonOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="pythonOutput">Click "Run Code" to execute the Python code above</div>
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="subtitle mb-4">NumPy Arrays Solution</h3>
+        <div class="interactive-code">
+          <textarea class="code-editor" id="numpyCode"># NumPy arrays - fast for large data
+import time
+
+try:
+    import numpy as np
+
+    # Create large arrays
+    big_arr1 = np.arange(100000)
+    big_arr2 = np.arange(100000)
+
+    # Add them together (one line!)
+    start = time.time()
+    big_result = big_arr1 + big_arr2
+    end = time.time()
+
+    print("NumPy Arrays:")
+    print(f"Time for 100,000 elements: {end - start:.4f} seconds")
+    print(f"Result shape: {big_result.shape}")
+    print(f"First 5 elements: {big_result[:5]}")
+
+except ImportError:
+    print("NumPy not available - showing concept")
+    print("In real NumPy, you would do: array1 + array2")
+    print("This would be much faster than Python lists!")
+    print("NumPy would process 100,000 elements in ~0.0001 seconds")</textarea>
+          <button class="run-button" onclick="runPythonCode('numpyCode', 'numpyOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="numpyOutput">Click "Run Code" to execute the NumPy code above</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+let pyodide = null;
+
+async function initializePyodide() {
+  if (pyodide) return;
+  
+  try {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage("numpy");
+    console.log("Pyodide and NumPy loaded successfully");
+  } catch (error) {
+    console.error("Error loading Pyodide:", error);
+    // Try alternative loading method
+    try {
+      const micropip = pyodide.pyimport("micropip");
+      await micropip.install("numpy");
+    } catch (e) {
+      console.error("Error loading NumPy via micropip:", e);
+    }
+  }
+}
+
+async function runPythonCode(codeId, outputId) {
+  const codeElement = document.getElementById(codeId);
+  const outputElement = document.getElementById(outputId);
+  const code = codeElement.value;
+  
+  if (!pyodide) {
+    outputElement.innerHTML = '<div class="loading">Loading Python environment...</div>';
+    await initializePyodide();
+  }
+  
+  outputElement.innerHTML = '<div class="loading">Running code...</div>';
+  
+  try {
+    pyodide.runPython(`
+import sys
+from io import StringIO
+import contextlib
+
+# Capture stdout
+old_stdout = sys.stdout
+sys.stdout = mystdout = StringIO()
+
+try:
+    exec("""${code.replace(/`/g, '\\`')}""")
+finally:
+    sys.stdout = old_stdout
+
+print(mystdout.getvalue())
+`);
+    
+    const result = pyodide.runPython("mystdout.getvalue()");
+    outputElement.innerHTML = result || "Code executed successfully (no output)";
+  } catch (error) {
+    outputElement.innerHTML = `Error: ${error.message}`;
+  }
+}
+
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+
+// Initialize Pyodide when page loads
+document.addEventListener('DOMContentLoaded', initializePyodide);
+</script>
+<script src="navigation.js"></script>
+</body>
+</html>

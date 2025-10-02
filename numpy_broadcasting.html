@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .code-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      margin: 12px 0;
+      overflow-x: auto;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+    .broadcasting-visualization {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .array-container {
+      flex: 1;
+      text-align: center;
+    }
+    .array-title {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+    .array-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 10px;
+    }
+    .array-row {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+    .array-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: bold;
+      color: #12377A;
+      min-width: 30px;
+      min-height: 30px;
+      animation: glow 2s infinite;
+    }
+    .scalar-cell {
+      background: rgba(40, 167, 69, 0.1);
+      border-color: #28a745;
+      color: #28a745;
+    }
+    .broadcasted-cell {
+      background: rgba(220, 53, 69, 0.1);
+      border-color: #dc3545;
+      color: #dc3545;
+    }
+    .result-cell {
+      background: rgba(255, 193, 7, 0.1);
+      border-color: #ffc107;
+      color: #856404;
+    }
+    .arrow {
+      font-size: 24px;
+      color: #12377A;
+      font-weight: bold;
+      margin: 0 20px;
+      animation: pulse 2s infinite;
+    }
+    .broadcasting-rules {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(18, 55, 122, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+    .rule-item {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      padding: 8px;
+      background: rgba(18, 55, 122, 0.05);
+      border-radius: 6px;
+    }
+    .rule-number {
+      background: #12377A;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 12px;
+      margin-right: 12px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(18, 55, 122, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(18, 55, 122, 0.6), 0 0 30px rgba(18, 55, 122, 0.4);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+    
+    @keyframes showBroadcasting {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px dashed #28a745;
+      }
+      20% {
+        opacity: 0.3;
+        transform: scale(0.7);
+        background: rgba(40, 167, 69, 0.2);
+        border: 2px dashed #28a745;
+      }
+      40% {
+        opacity: 0.6;
+        transform: scale(0.9);
+        background: rgba(40, 167, 69, 0.4);
+        border: 2px solid #28a745;
+      }
+      60% {
+        opacity: 0.8;
+        transform: scale(1.1);
+        background: rgba(40, 167, 69, 0.6);
+        border: 2px solid #28a745;
+      }
+      80% {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px solid #28a745;
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px solid #28a745;
+      }
+    }
+    
+    @keyframes showBroadcastingVertical {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px dashed #28a745;
+      }
+      20% {
+        opacity: 0.3;
+        transform: scale(0.7);
+        background: rgba(40, 167, 69, 0.2);
+        border: 2px dashed #28a745;
+      }
+      40% {
+        opacity: 0.6;
+        transform: scale(0.9);
+        background: rgba(40, 167, 69, 0.4);
+        border: 2px solid #28a745;
+      }
+      60% {
+        opacity: 0.8;
+        transform: scale(1.1);
+        background: rgba(40, 167, 69, 0.6);
+        border: 2px solid #28a745;
+      }
+      80% {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px solid #28a745;
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px solid #28a745;
+      }
+    }
+    
+    @keyframes fadeInStretched {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+        background: rgba(255, 193, 7, 0.3);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(0.8);
+        background: rgba(255, 193, 7, 0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(255, 193, 7, 0.1);
+      }
+    }
+    
+    @keyframes pulseStretch {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(18, 55, 122, 0.3);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(18, 55, 122, 0.6);
+      }
+    }
+    
+    .broadcasting-animation {
+      animation: showBroadcasting 5s ease-in-out infinite;
+      position: relative;
+    }
+    
+    .broadcasting-animation-vertical {
+      animation: showBroadcastingVertical 5s ease-in-out infinite;
+      position: relative;
+    }
+    
+    .stretched-result {
+      animation: fadeInStretched 1s ease-out 3s both;
+    }
+    
+    .original-array {
+      animation: pulseStretch 2s ease-in-out infinite;
+    }
+    
+    .broadcasting-step {
+      position: relative;
+      margin: 20px 0;
+    }
+    
+    .broadcasting-step::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border: 3px solid #12377A;
+      border-radius: 8px;
+      opacity: 0;
+      animation: highlightStep 5s ease-in-out infinite;
+    }
+    
+    @keyframes highlightStep {
+      0%, 20% {
+        opacity: 0;
+      }
+      25%, 75% {
+        opacity: 0.3;
+      }
+      80%, 100% {
+        opacity: 0;
+      }
+    }
+    
+    .broadcasting-step {
+      position: relative;
+    }
+    
+    .broadcasting-step::after {
+      content: '→';
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: #12377A;
+      font-weight: bold;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .broadcasting-step {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .broadcasting-step::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(18, 55, 122, 0.3), transparent);
+      animation: sweep 2s ease-in-out infinite;
+    }
+    
+    @keyframes sweep {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+    .interactive-code {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .code-editor {
+      width: 100%;
+      min-height: 120px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      resize: vertical;
+      background: #fff;
+    }
+    .run-button {
+      background: #12377A;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+    }
+    .run-button:hover {
+      background: #1e4a8c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .output {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      min-height: 50px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .loading {
+      color: #12377A;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">NumPy Broadcasting Magic</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h2 class="subtitle mb-4">What is Broadcasting?</h2>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="scalarCode"># Broadcasting allows operations between arrays of different shapes
+import numpy as np
+
+# Example 1: Scalar broadcasting
+arr = np.array([[1, 2, 3],
+                [4, 5, 6]])
+scalar = 10
+
+result = arr + scalar  # Scalar is broadcast to match arr shape
+print("Scalar broadcasting:")
+print(result)
+print("Shape of result:", result.shape)</textarea>
+          <button class="run-button" onclick="runPythonCode('scalarCode', 'scalarOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="scalarOutput">Click "Run Code" to execute the scalar broadcasting example</div>
+        </div>
+        
+        <div class="broadcasting-visualization">
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 1: Original Array (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="array-cell original-array">1</div>
+                  <div class="array-cell original-array">2</div>
+                  <div class="array-cell original-array">3</div>
+                </div>
+                <div class="array-row">
+                  <div class="array-cell original-array">4</div>
+                  <div class="array-cell original-array">5</div>
+                  <div class="array-cell original-array">6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">+</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 2: Scalar (1) → Broadcasts to (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="scalar-cell broadcasting-animation">10</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 0.5s;">10</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 1.0s;">10</div>
+                </div>
+                <div class="array-row">
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 1.5s;">10</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 2.0s;">10</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 2.5s;">10</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">=</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 3: Result (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="result-cell stretched-result">11</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.2s;">12</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.4s;">13</div>
+                </div>
+                <div class="array-row">
+                  <div class="result-cell stretched-result" style="animation-delay: 3.6s;">14</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.8s;">15</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 4.0s;">16</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <h3 class="subtitle mb-4">1D Array Broadcasting</h3>
+        <div class="broadcasting-visualization">
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 1: Original Array (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="array-cell original-array">1</div>
+                  <div class="array-cell original-array">2</div>
+                  <div class="array-cell original-array">3</div>
+                </div>
+                <div class="array-row">
+                  <div class="array-cell original-array">4</div>
+                  <div class="array-cell original-array">5</div>
+                  <div class="array-cell original-array">6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">+</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 2: 1D Array (3,) → Broadcasts to (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="scalar-cell broadcasting-animation">10</div>
+                  <div class="scalar-cell broadcasting-animation" style="animation-delay: 0.5s;">20</div>
+                  <div class="scalar-cell broadcasting-animation" style="animation-delay: 1.0s;">30</div>
+                </div>
+                <div class="array-row">
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 1.5s;">10</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 2.0s;">20</div>
+                  <div class="broadcasted-cell broadcasting-animation" style="animation-delay: 2.5s;">30</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">=</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 3: Result (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="result-cell stretched-result">11</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.2s;">22</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.4s;">33</div>
+                </div>
+                <div class="array-row">
+                  <div class="result-cell stretched-result" style="animation-delay: 3.6s;">14</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.8s;">25</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 4.0s;">36</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <h3 class="subtitle mb-4">Column Vector Broadcasting</h3>
+        <div class="broadcasting-visualization">
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 1: Original Array (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="array-cell original-array">1</div>
+                  <div class="array-cell original-array">2</div>
+                  <div class="array-cell original-array">3</div>
+                </div>
+                <div class="array-row">
+                  <div class="array-cell original-array">4</div>
+                  <div class="array-cell original-array">5</div>
+                  <div class="array-cell original-array">6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">+</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 2: Column Vector (2×1) → Broadcasts to (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="scalar-cell broadcasting-animation-vertical">10</div>
+                  <div class="broadcasted-cell broadcasting-animation-vertical" style="animation-delay: 0.5s;">10</div>
+                  <div class="broadcasted-cell broadcasting-animation-vertical" style="animation-delay: 1.0s;">10</div>
+                </div>
+                <div class="array-row">
+                  <div class="scalar-cell broadcasting-animation-vertical" style="animation-delay: 1.5s;">20</div>
+                  <div class="broadcasted-cell broadcasting-animation-vertical" style="animation-delay: 2.0s;">20</div>
+                  <div class="broadcasted-cell broadcasting-animation-vertical" style="animation-delay: 2.5s;">20</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="arrow">=</div>
+          
+          <div class="broadcasting-step">
+            <div class="array-container">
+              <div class="array-title">Step 3: Result (2×3)</div>
+              <div class="array-visual">
+                <div class="array-row">
+                  <div class="result-cell stretched-result">11</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.2s;">12</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.4s;">13</div>
+                </div>
+                <div class="array-row">
+                  <div class="result-cell stretched-result" style="animation-delay: 3.6s;">24</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 3.8s;">25</div>
+                  <div class="result-cell stretched-result" style="animation-delay: 4.0s;">26</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="array1dCode"># Example 2: 1D array broadcasting
+arr2d = np.array([[1, 2, 3],
+                  [4, 5, 6]])
+arr1d = np.array([10, 20, 30])
+
+result = arr2d + arr1d  # 1D array is broadcast to match 2D
+print("1D broadcasting:")
+print(result)
+print("Shape of result:", result.shape)</textarea>
+          <button class="run-button" onclick="runPythonCode('array1dCode', 'array1dOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="array1dOutput">Click "Run Code" to execute the 1D array broadcasting example</div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">Advanced Broadcasting Examples</h2>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="columnCode"># Example 3: Column vector broadcasting
+arr2d = np.array([[1, 2, 3],
+                  [4, 5, 6]])
+col_vector = np.array([[10], [20]])
+
+result = arr2d + col_vector
+print("Column vector broadcasting:")
+print(result)
+print("Shape of result:", result.shape)</textarea>
+          <button class="run-button" onclick="runPythonCode('columnCode', 'columnOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="columnOutput">Click "Run Code" to execute the column vector broadcasting example</div>
+        </div>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="broadcast3dCode"># Example 4: 3D broadcasting
+import numpy as np
+
+arr3d = np.random.rand(2, 3, 4)
+arr1d = np.array([1, 2, 3, 4])
+
+result = arr3d + arr1d  # 1D array broadcast to last dimension
+print("3D array shape:", arr3d.shape)
+print("1D array shape:", arr1d.shape)
+print("Result shape:", result.shape)
+print("First few values of result:")
+print(result[0, 0, :])  # Show first row of first slice</textarea>
+          <button class="run-button" onclick="runPythonCode('broadcast3dCode', 'broadcast3dOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="broadcast3dOutput">Click "Run Code" to execute the 3D broadcasting example</div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+<script>
+let pyodide = null;
+
+async function initializePyodide() {
+  if (pyodide) return;
+  
+  try {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage("numpy");
+    console.log("Pyodide and NumPy loaded successfully");
+  } catch (error) {
+    console.error("Error loading Pyodide:", error);
+    // Try alternative loading method
+    try {
+      const micropip = pyodide.pyimport("micropip");
+      await micropip.install("numpy");
+    } catch (e) {
+      console.error("Error loading NumPy via micropip:", e);
+    }
+  }
+}
+
+async function runPythonCode(codeId, outputId) {
+  const codeElement = document.getElementById(codeId);
+  const outputElement = document.getElementById(outputId);
+  const code = codeElement.value;
+  
+  if (!pyodide) {
+    outputElement.innerHTML = '<div class="loading">Loading Python environment...</div>';
+    await initializePyodide();
+  }
+  
+  outputElement.innerHTML = '<div class="loading">Running code...</div>';
+  
+  try {
+    pyodide.runPython(`
+import sys
+from io import StringIO
+import contextlib
+
+# Capture stdout
+old_stdout = sys.stdout
+sys.stdout = mystdout = StringIO()
+
+try:
+    exec("""${code.replace(/`/g, '\\`')}""")
+finally:
+    sys.stdout = old_stdout
+
+print(mystdout.getvalue())
+`);
+    
+    const result = pyodide.runPython("mystdout.getvalue()");
+    outputElement.innerHTML = result || "Code executed successfully (no output)";
+  } catch (error) {
+    outputElement.innerHTML = `Error: ${error.message}`;
+  }
+}
+
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+
+// Initialize Pyodide when page loads
+document.addEventListener('DOMContentLoaded', initializePyodide);
+</script>
+<script src="navigation.js"></script>
+</body>
+</html>

@@ -29,20 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Define the slide order
   const slideOrder = [
     'intro.html',
-    'what_are_data_structures.html',
-    'operations.html',
-    'comparison.html',
-    'lists_containing_everything.html',
-    'mutability_examples.html',
-    'for_loops.html',
-    'while_loops.html',
-    'loop_control.html',
-    'list_comprehensions.html',
-    'loops_with_data_structures.html',
-    'lets_code.html',
-    'memory.html',
-    'pass_by_reference.html',
-    'conclusion.html'
+    'numpy_introduction.html',
+    'numpy_vs_others.html',
+    'numpy_basics.html',
+    'numpy_masking.html',
+    'numpy_math_functions.html',
+    'numpy_broadcasting.html',
+    'numpy_linear_algebra.html',
+    'numpy_statistics.html',
+    'lets_code.html'
   ];
   
   // Get current slide filename

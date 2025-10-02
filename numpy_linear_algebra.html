@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #F2F9FC;
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+    }
+    .title {
+      color: #12377A;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .body-text {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .code-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      margin: 12px 0;
+      overflow-x: auto;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+    .matrix-visualization {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border: 2px solid rgba(18, 55, 122, 0.2);
+    }
+    .matrix-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 55, 122, 0.1);
+      border: 2px solid #12377A;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #12377A;
+      min-height: 40px;
+      animation: glow 2s infinite;
+    }
+    .matrix-cell:hover {
+      transform: scale(1.05);
+      background: rgba(18, 55, 122, 0.2);
+    }
+    .operation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .operation-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #12377A;
+    }
+    .operation-name {
+      color: #12377A;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .operation-description {
+      color: #858481;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .operation-example {
+      background: #f8f9fa;
+      border-radius: 4px;
+      padding: 8px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(18, 55, 122, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(18, 55, 122, 0.6), 0 0 30px rgba(18, 55, 122, 0.4);
+      }
+    }
+    .interactive-code {
+      margin: 12px 0;
+    }
+    .code-editor {
+      width: 100%;
+      min-height: 120px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      padding: 12px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .run-button {
+      background-color: #12377A;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      margin: 8px 0;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .run-button:hover {
+      background-color: #0d2a5f;
+      transform: translateY(-1px);
+    }
+    .run-button:active {
+      transform: translateY(0);
+    }
+    .run-button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .output {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      min-height: 40px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .loading {
+      color: #12377A;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  <div class="slide-container p-10">
+    <h1 class="title mb-6">NumPy Linear Algebra</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h2 class="subtitle mb-4">Matrix Operations</h2>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="matricesCode">import numpy as np
+
+# Create matrices
+A = np.array([[1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 9]])
+
+B = np.array([[9, 8, 7],
+              [6, 5, 4],
+              [3, 2, 1]])
+
+print("Matrix A:")
+print(A)
+print("Matrix B:")
+print(B)</textarea>
+          <button class="run-button" onclick="runPythonCode('matricesCode', 'matricesOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="matricesOutput">Click "Run Code" to execute the Python code above</div>
+        </div>
+        
+        
+        <div class="operation-grid">
+          <div class="operation-card">
+            <div class="operation-name">Matrix Addition</div>
+            <div class="operation-description">Element-wise addition</div>
+            <div class="operation-example">
+C = A + B
+print(C)
+            </div>
+          </div>
+          
+          <div class="operation-card">
+            <div class="operation-name">Matrix Multiplication</div>
+            <div class="operation-description">Dot product of matrices</div>
+            <div class="operation-example">
+C = np.dot(A, B)
+# or
+C = A @ B
+            </div>
+          </div>
+          
+          <div class="operation-card">
+            <div class="operation-name">Element-wise Multiplication</div>
+            <div class="operation-description">Hadamard product</div>
+            <div class="operation-example">
+C = A * B
+print(C)
+            </div>
+          </div>
+          
+          <div class="operation-card">
+            <div class="operation-name">Matrix Transpose</div>
+            <div class="operation-description">Swap rows and columns</div>
+            <div class="operation-example">
+A_T = A.T
+# or
+A_T = np.transpose(A)
+            </div>
+          </div>
+        </div>
+        
+        <h3 class="subtitle mb-4">Advanced Matrix Operations</h3>
+        <div class="interactive-code">
+          <textarea class="code-editor" id="advancedCode">import numpy as np
+
+# Create matrix
+A = np.array([[1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 9]])
+
+# Matrix properties
+print("Determinant:", np.linalg.det(A))
+print("Trace:", np.trace(A))
+print("Rank:", np.linalg.matrix_rank(A))
+
+# Matrix inverse
+try:
+    A_inv = np.linalg.inv(A)
+    print("Inverse matrix:")
+    print(A_inv)
+except np.linalg.LinAlgError:
+    print("Matrix is singular (not invertible)")
+
+# Eigenvalues and eigenvectors
+eigenvals, eigenvecs = np.linalg.eig(A)
+print("Eigenvalues:", eigenvals)
+print("Eigenvectors:")
+print(eigenvecs)</textarea>
+          <button class="run-button" onclick="runPythonCode('advancedCode', 'advancedOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="advancedOutput">Click "Run Code" to execute the Python code above</div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="subtitle mb-4">Linear System Solving</h2>
+        
+        <div class="interactive-code">
+          <textarea class="code-editor" id="linearSystemCode">import numpy as np
+
+# Solve linear system Ax = b
+A = np.array([[3, 2, 1],
+              [1, 1, 1],
+              [2, 1, 2]])
+
+b = np.array([6, 4, 7])
+
+# Solution
+x = np.linalg.solve(A, b)
+print("Solution x:", x)</textarea>
+          <button class="run-button" onclick="runPythonCode('linearSystemCode', 'linearSystemOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="linearSystemOutput">Click "Run Code" to execute the Python code above</div>
+        </div>
+        
+        <h3 class="subtitle mb-4">Vector Operations</h3>
+        <div class="interactive-code">
+          <textarea class="code-editor" id="vectorOpsCode">import numpy as np
+
+# Vector operations
+v1 = np.array([1, 2, 3])
+v2 = np.array([4, 5, 6])
+
+# Dot product
+dot_product = np.dot(v1, v2)
+print("Dot product:", dot_product)
+
+# Cross product (3D vectors)
+cross_product = np.cross(v1, v2)
+print("Cross product:", cross_product)
+
+# Vector norms
+l2_norm = np.linalg.norm(v1)
+l1_norm = np.linalg.norm(v1, ord=1)
+print("L2 norm:", l2_norm)
+print("L1 norm:", l1_norm)
+
+</textarea>
+          <button class="run-button" onclick="runPythonCode('vectorOpsCode', 'vectorOpsOutput')">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <div class="output" id="vectorOpsOutput">Click "Run Code" to execute the Python code above</div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+<script>
+let pyodide = null;
+
+async function initializePyodide() {
+  if (pyodide) return;
+  
+  try {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage("numpy");
+    console.log("Pyodide and NumPy loaded successfully");
+  } catch (error) {
+    console.error("Error loading Pyodide:", error);
+    // Fallback: try micropip
+    try {
+      await pyodide.loadPackage("micropip");
+      const micropip = pyodide.pyimport("micropip");
+      await micropip.install("numpy");
+      console.log("NumPy installed via micropip");
+    } catch (micropipError) {
+      console.error("Error installing NumPy via micropip:", micropipError);
+    }
+  }
+}
+
+async function runPythonCode(codeId, outputId) {
+  const codeElement = document.getElementById(codeId);
+  const outputElement = document.getElementById(outputId);
+  const button = codeElement.nextElementSibling;
+  
+  if (!codeElement || !outputElement) {
+    console.error("Code or output element not found");
+    return;
+  }
+  
+  const code = codeElement.value;
+  if (!code.trim()) {
+    outputElement.textContent = "Please enter some code to run.";
+    return;
+  }
+  
+  // Initialize Pyodide if not already done
+  if (!pyodide) {
+    outputElement.textContent = "Loading Python environment...";
+    button.disabled = true;
+    await initializePyodide();
+    button.disabled = false;
+  }
+  
+  if (!pyodide) {
+    outputElement.textContent = "Failed to load Python environment. Please refresh the page.";
+    return;
+  }
+  
+  try {
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
+    outputElement.textContent = "Running code...";
+    
+    // Clear previous output
+    pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+`);
+    
+    // Run the user code
+    pyodide.runPython(code);
+    
+    // Capture output
+    const stdout = pyodide.runPython("sys.stdout.getvalue()");
+    const stderr = pyodide.runPython("sys.stderr.getvalue()");
+    
+    // Restore stdout/stderr
+    pyodide.runPython(`
+import sys
+sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
+`);
+    
+    if (stderr) {
+      outputElement.textContent = `Error: ${stderr}`;
+      outputElement.style.color = "#dc3545";
+    } else {
+      outputElement.textContent = stdout || "Code executed successfully (no output)";
+      outputElement.style.color = "#333";
+    }
+    
+  } catch (error) {
+    outputElement.textContent = `Error: ${error.message}`;
+    outputElement.style.color = "#dc3545";
+  } finally {
+    button.disabled = false;
+    button.innerHTML = '<i class="fas fa-play"></i> Run Code';
+  }
+}
+
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    document.documentElement.requestFullscreen().then(() => {
+      icon.className = 'fas fa-compress';
+      btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to enable fullscreen:', err.message);
+    });
+  } else {
+    // Exit fullscreen
+    document.exitFullscreen().then(() => {
+      icon.className = 'fas fa-expand';
+      btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+    }).catch(err => {
+      console.log('Error attempting to exit fullscreen:', err.message);
+    });
+  }
+}
+
+// Listen for fullscreen changes (e.g., when user presses ESC)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  const icon = document.getElementById('fullscreenIcon');
+  
+  if (!document.fullscreenElement) {
+    icon.className = 'fas fa-expand';
+    btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+  } else {
+    icon.className = 'fas fa-compress';
+    btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+  }
+});
+</script>
+<script src="navigation.js"></script>
+</body>
+</html>
