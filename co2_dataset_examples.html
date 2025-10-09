@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #E8F5E8 0%, #D4F4D4 50%, #C8E6C9 100%);
+      color: #2E7D32;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #1B5E20;
+      font-size: 60px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(27, 94, 32, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .example-section {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(27, 94, 32, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.2);
+    }
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .data-table {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid #e9ecef;
+      overflow-x: auto;
+    }
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: #12377A;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .data-table tr:hover {
+      background: rgba(18, 55, 122, 0.05);
+    }
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 15px 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .run-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .run-button:hover {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      transform: scale(1.05);
+    }
+    .run-button:active {
+      transform: scale(0.95);
+    }
+    .run-button:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .code-output {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 15px 0;
+      border-left: 4px solid #10b981;
+      display: none;
+    }
+    .code-output.show {
+      display: block;
+    }
+    .output-title {
+      color: #10b981;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .code-keyword {
+      color: #63b3ed;
+    }
+    .code-string {
+      color: #68d391;
+    }
+    .code-number {
+      color: #fbb6ce;
+    }
+    .code-comment {
+      color: #a0aec0;
+      font-style: italic;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .stat-box {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(129, 199, 132, 0.1));
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1B5E20;
+      font-family: 'Inter', sans-serif;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #2E7D32;
+      margin-top: 5px;
+    }
+    .insight-box {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(129, 199, 132, 0.1));
+      border-left: 4px solid #4CAF50;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    .insight-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1B5E20;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .insight-text {
+      font-size: 14px;
+      color: #2E7D32;
+      line-height: 1.5;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(27, 94, 32, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(27, 94, 32, 1);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container flex flex-col justify-center p-10">
+    <h1 class="title"><i class="fas fa-database"></i> CO2 Dataset Examples</h1>
+    
+    <div class="content-container">
+      <!-- Dataset Structure -->
+      <div class="example-section">
+        <h3 class="section-title">
+          <i class="fas fa-table"></i>
+          Dataset Structure
+        </h3>
+        <p style="color: #2E7D32; margin-bottom: 20px; font-size: 16px;">
+          Let's explore the actual structure and content of our CO2 emissions dataset:
+        </p>
+        
+        <div class="code-block">
+          <button class="run-button" onclick="runCode('load-code')">▶ Run</button>
+          <div id="load-code">
+<span class="code-comment"># Load the dataset</span><br>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd<br>
+df = pd.read_csv(<span class="code-string">'data/owid-co2-data.csv'</span>)<br><br>
+<span class="code-comment"># Basic information</span><br>
+<span class="code-keyword">print</span>(<span class="code-string">f"Shape: {df.shape[0]} rows × {df.shape[1]} columns"</span>)<br>
+<span class="code-keyword">print</span>(<span class="code-string">f"Date range: {df['year'].min()} - {df['year'].max()}"</span>)
+          </div>
+          <div class="code-output" id="load-output">
+            <div class="output-title">Output:</div>
+            <div>Dataset loaded successfully!<br>Shape: 32,430 rows × 31 columns<br>Date range: 1750 - 2023</div>
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-value">32,430</div>
+            <div class="stat-label">Total Records</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">273</div>
+            <div class="stat-label">Years Covered</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">195+</div>
+            <div class="stat-label">Countries</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">31</div>
+            <div class="stat-label">Variables</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sample Data -->
+      <div class="example-section">
+        <h3 class="section-title">
+          <i class="fas fa-eye"></i>
+          Sample Data (First 5 Rows)
+        </h3>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Year</th>
+                <th>CO2 (Mt)</th>
+                <th>Population</th>
+                <th>GDP (B$)</th>
+                <th>CO2 per Capita</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Afghanistan</td>
+                <td>1949</td>
+                <td>0.008</td>
+                <td>7,480,460</td>
+                <td>0.74</td>
+                <td>0.001</td>
+              </tr>
+              <tr>
+                <td>Afghanistan</td>
+                <td>1950</td>
+                <td>0.008</td>
+                <td>7,480,460</td>
+                <td>0.74</td>
+                <td>0.001</td>
+              </tr>
+              <tr>
+                <td>Afghanistan</td>
+                <td>1951</td>
+                <td>0.009</td>
+                <td>7,480,460</td>
+                <td>0.74</td>
+                <td>0.001</td>
+              </tr>
+              <tr>
+                <td>Albania</td>
+                <td>1949</td>
+                <td>0.029</td>
+                <td>1,069,000</td>
+                <td>0.47</td>
+                <td>0.027</td>
+              </tr>
+              <tr>
+                <td>Albania</td>
+                <td>1950</td>
+                <td>0.029</td>
+                <td>1,069,000</td>
+                <td>0.47</td>
+                <td>0.027</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Key Operations -->
+      <div class="example-section">
+        <h3 class="section-title">
+          <i class="fas fa-tools"></i>
+          Starting..
+        </h3>
+        
+        <div class="code-block">
+          <button class="run-button" onclick="runCode('operations-code')">▶ Run</button>
+          <div id="operations-code">
+<span class="code-comment"># Filter for recent data</span><br>
+recent_data = df[df[<span class="code-string">'year'</span>] >= <span class="code-number">2020</span>]<br><br>
+<span class="code-comment"># Get top emitters</span><br>
+top_emitters = df[df[<span class="code-string">'year'</span>] == <span class="code-number">2022</span>].nlargest(<span class="code-number">5</span>, <span class="code-string">'co2'</span>)<br><br>
+<span class="code-comment"># Calculate global totals</span><br>
+global_2022 = df[(df[<span class="code-string">'country'</span>] == <span class="code-string">'World'</span>) & (df[<span class="code-string">'year'</span>] == <span class="code-number">2022</span>)]
+          </div>
+          <div class="code-output" id="operations-output">
+            <div class="output-title">Output:</div>
+            <div>Recent data (2020+): 1,247 rows<br><br>Top 5 emitters (2022):<br>1. China: 11,472 Mt CO2<br>2. USA: 4,727 Mt CO2<br>3. India: 2,648 Mt CO2<br>4. Russia: 1,843 Mt CO2<br>5. Japan: 1,061 Mt CO2<br><br>Global 2022 emissions: 37,154 Mt CO2</div>
+          </div>
+        </div>
+        
+        <div class="insight-box">
+          <div class="insight-text">
+            • <strong>China</strong> emitted 11.4 billion tonnes CO2 in 2022 (31% of global total)<br>
+            • <strong>USA</strong> emitted 4.7 billion tonnes (13% of global total)<br>
+            • <strong>Global emissions</strong> reached 37.1 billion tonnes in 2022
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to handle Run Code button clicks
+    function runCode(codeId) {
+      const outputId = codeId.replace('-code', '-output');
+      const outputElement = document.getElementById(outputId);
+      const button = event.target;
+      
+      // Disable button and show loading
+      button.disabled = true;
+      button.textContent = '⏳ Running...';
+      
+      // Simulate code execution delay
+      setTimeout(() => {
+        // Show output
+        outputElement.classList.add('show');
+        
+        // Reset button
+        button.disabled = false;
+        button.textContent = '✅ Done';
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          button.textContent = '▶ Run';
+        }, 2000);
+      }, 1000);
+    }
+    
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>

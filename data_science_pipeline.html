@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F2F9FC 0%, #E3F2FD 100%);
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #12377A;
+      font-size: 72px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(18, 55, 122, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .pipeline-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .pipeline-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      padding: 20px;
+    }
+    .step-icon {
+      font-size: 48px;
+      color: #12377A;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .step-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #12377A;
+      margin-bottom: 15px;
+      font-family: 'Inter', sans-serif;
+    }
+    .step-description {
+      font-size: 16px;
+      color: #858481;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .step-tools {
+      font-size: 14px;
+      color: #12377A;
+      font-weight: 500;
+      background: rgba(18, 55, 122, 0.1);
+      padding: 8px 12px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .arrow {
+      font-size: 32px;
+      color: #12377A;
+      margin: 0 20px;
+      animation: pulse 2s infinite;
+    }
+    .library-logo {
+      width: 60px;
+      height: 60px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(18, 55, 122, 0.3);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(18, 55, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(18, 55, 122, 1);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container flex flex-col justify-center p-10">
+    <h1 class="title">Data Science Pipeline</h1>
+    
+    <div class="pipeline-container">
+      <!-- Step 1: Data Gathering -->
+      <div class="pipeline-step">
+        <i class="fas fa-database step-icon"></i>
+        <h3 class="step-title">Data Gathering</h3>
+        <p class="step-description">Collecting data from various sources like files, databases, APIs, and web scraping</p>
+        <div class="step-tools">CSV, JSON, APIs, Web Scraping</div>
+      </div>
+      
+      <i class="fas fa-arrow-right arrow"></i>
+      
+      <!-- Step 2: Data Analysis -->
+      <div class="pipeline-step">
+        <i class="fas fa-chart-line step-icon"></i>
+        <h3 class="step-title">Data Analysis</h3>
+        <p class="step-description">Exploring, visualizing, and understanding patterns in the data</p>
+        <div class="library-logo">
+          <div>
+            <div style="font-size: 12px;"><i class="fas fa-chart-bar"></i></div>
+            <div>Matplotlib</div>
+          </div>
+        </div>
+        <div class="step-tools">Statistical Analysis, Visualization</div>
+      </div>
+      
+      <i class="fas fa-arrow-right arrow"></i>
+      
+      <!-- Step 3: Data Preprocessing -->
+      <div class="pipeline-step">
+        <i class="fas fa-cogs step-icon"></i>
+        <h3 class="step-title">Data Preprocessing</h3>
+        <p class="step-description">Cleaning, transforming, and preparing data for analysis</p>
+        <div class="library-logo">
+          <div>
+            <div style="font-size: 12px;"><i class="fas fa-table"></i></div>
+            <div>Pandas</div>
+          </div>
+        </div>
+        <div class="step-tools">Cleaning, Transformation</div>
+      </div>
+      
+      <i class="fas fa-arrow-right arrow"></i>
+      
+      <!-- Step 4: Modeling -->
+      <div class="pipeline-step">
+        <i class="fas fa-brain step-icon"></i>
+        <h3 class="step-title">Modeling</h3>
+        <p class="step-description">Building statistical and machine learning models</p>
+        <div class="step-tools">ML Algorithms, Statistics</div>
+      </div>
+      
+      <i class="fas fa-arrow-right arrow"></i>
+      
+      <!-- Step 5: Communication -->
+      <div class="pipeline-step">
+        <i class="fas fa-presentation step-icon"></i>
+        <h3 class="step-title">Communication</h3>
+        <p class="step-description">Presenting results through reports and visualizations</p>
+        <div class="library-logo">
+          <div>
+            <div style="font-size: 12px;"><i class="fas fa-chart-bar"></i></div>
+            <div>Matplotlib</div>
+          </div>
+        </div>
+        <div class="step-tools">Dashboards, Reports</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>
