@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F2F9FC 0%, #E3F2FD 100%);
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #12377A;
+      font-size: 72px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(18, 55, 122, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 28px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin-bottom: 60px;
+      opacity: 0.8;
+    }
+    .animation-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .code-example {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(18, 55, 122, 0.1);
+      margin-bottom: 40px;
+      border-left: 5px solid #12377A;
+    }
+    .code-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #12377A;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    .code-snippet {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .code-keyword {
+      color: #63b3ed;
+    }
+    .code-string {
+      color: #68d391;
+    }
+    .code-variable {
+      color: #fbb6ce;
+    }
+    .data-visualization {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .data-section {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(18, 55, 122, 0.1);
+      position: relative;
+    }
+    .section-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #12377A;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: #12377A;
+      color: white;
+      padding: 12px 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 10px 8px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    .data-table tr:hover td {
+      background: rgba(18, 55, 122, 0.05);
+    }
+    .year-cell {
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      font-weight: 600;
+    }
+    .co2-cell {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      font-weight: 600;
+    }
+    .group-highlight {
+      background: rgba(255, 235, 59, 0.3) !important;
+      border: 2px solid #ffc107 !important;
+      animation: highlightPulse 1s ease-in-out;
+    }
+    .arrow-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 30px 0;
+    }
+    .arrow {
+      font-size: 48px;
+      color: #12377A;
+      animation: bounce 2s infinite;
+    }
+    .operation-steps {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(18, 55, 122, 0.1);
+      margin-bottom: 40px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border-left: 4px solid #12377A;
+      transition: all 0.3s ease;
+      opacity: 0.5;
+    }
+    .step.active {
+      opacity: 1;
+      background: rgba(18, 55, 122, 0.05);
+      border-left-color: #1e40af;
+      transform: translateX(10px);
+    }
+    .step.completed {
+      opacity: 0.8;
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.1), rgba(34, 197, 94, 0.1));
+      border-left-color: #16a34a;
+    }
+    .step-number {
+      background: #12377A;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-right: 15px;
+      font-family: 'Inter', sans-serif;
+    }
+    .step.completed .step-number {
+      background: #16a34a;
+    }
+    .step.active .step-number {
+      background: #1e40af;
+      animation: pulse 1s ease-in-out;
+    }
+    .step-text {
+      font-size: 16px;
+      color: #2d3748;
+      font-weight: 500;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .control-btn {
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(18, 55, 122, 0.3);
+    }
+    .control-btn:hover {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(18, 55, 122, 0.4);
+    }
+    .control-btn:active {
+      transform: translateY(0);
+    }
+    .control-btn:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      color: #12377A;
+      transition: all 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(18, 55, 122, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background: white;
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(18, 55, 122, 0.3);
+    }
+    .result-summary {
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.1), rgba(34, 197, 94, 0.1));
+      border: 2px solid #16a34a;
+      border-radius: 20px;
+      padding: 25px;
+      margin-top: 30px;
+      text-align: center;
+    }
+    .result-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #16a34a;
+      margin-bottom: 15px;
+      font-family: 'Inter', sans-serif;
+    }
+    .result-description {
+      font-size: 16px;
+      color: #2d3748;
+      line-height: 1.5;
+    }
+    @keyframes highlightPulse {
+      0%, 100% { background: rgba(255, 235, 59, 0.3); }
+      50% { background: rgba(255, 235, 59, 0.6); }
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <!-- Fullscreen Button -->
+    <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+      <i class="fas fa-expand" id="fullscreenIcon"></i>
+    </button>
+
+    <!-- Slide Header -->
+    <h1 class="title">
+      <i class="fas fa-layer-group"></i>
+      Pandas GroupBy Animation
+    </h1>
+    <p class="subtitle">Visualizing Data Aggregation with CO2 Emissions Data</p>
+
+    <!-- Code Example -->
+    <div class="animation-container">
+      <div class="code-example fade-in">
+        <h2 class="code-title">
+          <i class="fas fa-code"></i>
+          The GroupBy Operation
+        </h2>
+        <div class="code-snippet">
+co2_by_year = df.<span class="code-keyword">groupby</span>(<span class="code-string">'year'</span>)[<span class="code-string">'co2'</span>].<span class="code-keyword">sum</span>()
+        </div>
+      </div>
+
+      <!-- Operation Steps -->
+      <div class="operation-steps fade-in" style="animation-delay: 0.2s;">
+        <h2 class="section-title">
+          <i class="fas fa-cogs"></i>
+          Step-by-Step Process
+        </h2>
+        <div class="step" id="step1">
+          <div class="step-number">1</div>
+          <div class="step-text">Group rows by the 'year' column</div>
+        </div>
+        <div class="step" id="step2">
+          <div class="step-number">2</div>
+          <div class="step-text">Select the 'co2' column from each group</div>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-number">3</div>
+          <div class="step-text">Apply the 'sum' function to aggregate values</div>
+        </div>
+        <div class="step" id="step4">
+          <div class="step-number">4</div>
+          <div class="step-text">Return a new Series with year as index</div>
+        </div>
+      </div>
+
+      <!-- Data Visualization -->
+      <div class="data-visualization fade-in" style="animation-delay: 0.4s;">
+        <!-- Original Data -->
+        <div class="data-section">
+          <h3 class="section-title">Original DataFrame</h3>
+          <table class="data-table" id="originalTable">
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Year</th>
+                <th>CO2 (Mt)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-year="2020">
+                <td>USA</td>
+                <td class="year-cell">2020</td>
+                <td class="co2-cell">4713.2</td>
+              </tr>
+              <tr data-year="2021">
+                <td>China</td>
+                <td class="year-cell">2021</td>
+                <td class="co2-cell">11472.4</td>
+              </tr>
+              <tr data-year="2020">
+                <td>India</td>
+                <td class="year-cell">2020</td>
+                <td class="co2-cell">2648.7</td>
+              </tr>
+              <tr data-year="2021">
+                <td>Germany</td>
+                <td class="year-cell">2021</td>
+                <td class="co2-cell">644.9</td>
+              </tr>
+              <tr data-year="2020">
+                <td>Japan</td>
+                <td class="year-cell">2020</td>
+                <td class="co2-cell">1061.3</td>
+              </tr>
+              <tr data-year="2021">
+                <td>USA</td>
+                <td class="year-cell">2021</td>
+                <td class="co2-cell">4727.1</td>
+              </tr>
+              <tr data-year="2020">
+                <td>China</td>
+                <td class="year-cell">2020</td>
+                <td class="co2-cell">11234.8</td>
+              </tr>
+              <tr data-year="2021">
+                <td>India</td>
+                <td class="year-cell">2021</td>
+                <td class="co2-cell">2847.9</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Arrow -->
+        <div class="arrow-container">
+          <i class="fas fa-arrow-right arrow" id="arrow"></i>
+        </div>
+
+        <!-- Grouped Result -->
+        <div class="data-section">
+          <h3 class="section-title">GroupBy Result</h3>
+          <table class="data-table" id="resultTable">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Total CO2 (Mt)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="result-2020">
+                <td class="year-cell">2020</td>
+                <td class="co2-cell" id="sum-2020">-</td>
+              </tr>
+              <tr id="result-2021">
+                <td class="year-cell">2021</td>
+                <td class="co2-cell" id="sum-2021">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Result Summary -->
+      <div class="result-summary fade-in" style="animation-delay: 0.6s;">
+        <h3 class="result-title">
+          <i class="fas fa-chart-bar"></i>
+          What We Accomplished
+        </h3>
+        <p class="result-description">
+          We grouped the original dataset by year and calculated the total CO2 emissions for each year. 
+          This aggregation allows us to see yearly trends and compare emissions across different time periods.
+        </p>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="control-btn" onclick="startAnimation()">
+          <i class="fas fa-play"></i> Start Animation
+        </button>
+        <button class="control-btn" onclick="resetAnimation()">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+        <button class="control-btn" onclick="toggleFullscreen()">
+          <i class="fas fa-expand"></i> Fullscreen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let animationInterval;
+    
+    const steps = [
+      { id: 'step1', description: 'Grouping rows by year...', highlightRows: true },
+      { id: 'step2', description: 'Selecting CO2 column...', highlightColumn: true },
+      { id: 'step3', description: 'Calculating sums...', calculateSums: true },
+      { id: 'step4', description: 'Creating result Series...', showResult: true }
+    ];
+
+    function startAnimation() {
+      if (animationInterval) return;
+      
+      resetAnimation();
+      
+      animationInterval = setInterval(() => {
+        nextStep();
+      }, 2000);
+      
+      // Start immediately
+      nextStep();
+    }
+
+    function nextStep() {
+      if (currentStep >= steps.length) {
+        clearInterval(animationInterval);
+        animationInterval = null;
+        return;
+      }
+
+      const step = steps[currentStep];
+      
+      // Update step visualization
+      updateStepVisualization(step);
+      
+      // Execute step-specific animation
+      executeStepAnimation(step);
+      
+      currentStep++;
+    }
+
+    function updateStepVisualization(step) {
+      // Reset all steps
+      document.querySelectorAll('.step').forEach(s => {
+        s.classList.remove('active', 'completed');
+      });
+
+      // Mark previous steps as completed
+      for (let i = 0; i < currentStep; i++) {
+        const stepElement = document.getElementById(steps[i].id);
+        stepElement.classList.add('completed');
+      }
+
+      // Mark current step as active
+      const currentStepElement = document.getElementById(step.id);
+      currentStepElement.classList.add('active');
+    }
+
+    function executeStepAnimation(step) {
+      if (step.highlightRows) {
+        highlightRowsByYear();
+      } else if (step.highlightColumn) {
+        highlightCO2Column();
+      } else if (step.calculateSums) {
+        calculateAndShowSums();
+      } else if (step.showResult) {
+        showFinalResult();
+      }
+    }
+
+    function highlightRowsByYear() {
+      // Remove previous highlights
+      document.querySelectorAll('.group-highlight').forEach(el => {
+        el.classList.remove('group-highlight');
+      });
+
+      // Highlight 2020 rows
+      setTimeout(() => {
+        document.querySelectorAll('[data-year="2020"]').forEach(row => {
+          row.classList.add('group-highlight');
+        });
+      }, 500);
+
+      // Highlight 2021 rows
+      setTimeout(() => {
+        document.querySelectorAll('[data-year="2021"]').forEach(row => {
+          row.classList.add('group-highlight');
+        });
+      }, 1500);
+    }
+
+    function highlightCO2Column() {
+      // Remove row highlights
+      document.querySelectorAll('.group-highlight').forEach(el => {
+        el.classList.remove('group-highlight');
+      });
+
+      // Highlight CO2 column
+      document.querySelectorAll('.co2-cell').forEach(cell => {
+        cell.classList.add('group-highlight');
+      });
+    }
+
+    function calculateAndShowSums() {
+      // Remove column highlights
+      document.querySelectorAll('.group-highlight').forEach(el => {
+        el.classList.remove('group-highlight');
+      });
+
+      // Calculate and animate sums
+      const sum2020 = 4713.2 + 2648.7 + 1061.3 + 11234.8; // 19657.0
+      const sum2021 = 11472.4 + 644.9 + 4727.1 + 2847.9; // 19692.3
+
+      animateNumber(document.getElementById('sum-2020'), sum2020);
+      animateNumber(document.getElementById('sum-2021'), sum2021);
+    }
+
+    function animateNumber(element, targetValue) {
+      const duration = 1500;
+      const startValue = 0;
+      const increment = (targetValue - startValue) / (duration / 50);
+      let currentValue = startValue;
+
+      const timer = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= targetValue) {
+          currentValue = targetValue;
+          clearInterval(timer);
+        }
+        element.textContent = currentValue.toFixed(1);
+      }, 50);
+    }
+
+    function showFinalResult() {
+      // Highlight result rows
+      document.getElementById('result-2020').classList.add('group-highlight');
+      document.getElementById('result-2021').classList.add('group-highlight');
+      
+      // Animate arrow
+      document.getElementById('arrow').style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        document.getElementById('arrow').style.transform = 'scale(1)';
+      }, 500);
+    }
+
+    function resetAnimation() {
+      clearInterval(animationInterval);
+      animationInterval = null;
+      currentStep = 0;
+      
+      // Reset all steps
+      document.querySelectorAll('.step').forEach(s => {
+        s.classList.remove('active', 'completed');
+      });
+      
+      // Remove all highlights
+      document.querySelectorAll('.group-highlight').forEach(el => {
+        el.classList.remove('group-highlight');
+      });
+      
+      // Reset result values
+      document.getElementById('sum-2020').textContent = '-';
+      document.getElementById('sum-2021').textContent = '-';
+    }
+
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+        });
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        e.preventDefault();
+        startAnimation();
+      } else if (e.key === 'r') {
+        e.preventDefault();
+        resetAnimation();
+      }
+    });
+
+    // Add hover effects to table rows
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableRows = document.querySelectorAll('.data-table tr');
+      tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+          if (!this.classList.contains('group-highlight')) {
+            this.style.background = 'rgba(18, 55, 122, 0.05)';
+          }
+        });
+        
+        row.addEventListener('mouseleave', function() {
+          if (!this.classList.contains('group-highlight')) {
+            this.style.background = 'transparent';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

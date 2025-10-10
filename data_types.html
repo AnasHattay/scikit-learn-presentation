@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F2F9FC 0%, #E3F2FD 100%);
+      color: #858481;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #12377A;
+      font-size: 72px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(18, 55, 122, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .subtitle {
+      color: #12377A;
+      font-size: 28px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin-bottom: 60px;
+      opacity: 0.8;
+    }
+    .data-types-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .data-type-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(18, 55, 122, 0.1);
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .data-type-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(18, 55, 122, 0.15);
+    }
+    .structured-card {
+      border-color: #16a34a;
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.05), rgba(34, 197, 94, 0.05));
+    }
+    .unstructured-card {
+      border-color: #dc2626;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(239, 68, 68, 0.05));
+    }
+    .card-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+    .structured-icon {
+      color: #16a34a;
+    }
+    .unstructured-icon {
+      color: #dc2626;
+    }
+    .card-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #12377A;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .card-subtitle {
+      font-size: 18px;
+      color: #858481;
+      font-weight: 500;
+    }
+    .definition {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border-left: 4px solid #12377A;
+    }
+    .definition-text {
+      font-size: 16px;
+      color: #4a5568;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .examples-section {
+      margin-bottom: 25px;
+    }
+    .examples-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #12377A;
+      margin-bottom: 15px;
+      font-family: 'Inter', sans-serif;
+    }
+    .example-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+    .example-item:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateX(5px);
+    }
+    .example-icon {
+      font-size: 20px;
+      margin-right: 12px;
+      width: 24px;
+      text-align: center;
+    }
+    .structured-example-icon {
+      color: #16a34a;
+    }
+    .unstructured-example-icon {
+      color: #dc2626;
+    }
+    .example-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #2d3748;
+      flex: 1;
+    }
+    .example-description {
+      font-size: 12px;
+      color: #858481;
+      margin-left: 10px;
+    }
+    .visual-example {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.4;
+      position: relative;
+      overflow: hidden;
+    }
+    .csv-example {
+      color: #2d3748;
+    }
+    .csv-header {
+      background: #12377A;
+      color: white;
+      padding: 8px 12px;
+      margin: -20px -20px 15px -20px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .csv-row {
+      padding: 5px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .csv-row:hover {
+      background: rgba(18, 55, 122, 0.05);
+    }
+    .json-example {
+      color: #2d3748;
+    }
+    .json-header {
+      background: #dc2626;
+      color: white;
+      padding: 8px 12px;
+      margin: -20px -20px 15px -20px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .json-key {
+      color: #12377A;
+      font-weight: 600;
+    }
+    .json-string {
+      color: #16a34a;
+    }
+    .json-number {
+      color: #dc2626;
+    }
+    .image-example {
+      background: #f0f9ff;
+      border: 2px dashed #0ea5e9;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      color: #0c4a6e;
+      position: relative;
+    }
+    .image-placeholder {
+      width: 100px;
+      height: 80px;
+      background: linear-gradient(45deg, #0ea5e9, #3b82f6);
+      border-radius: 8px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+    .image-info {
+      font-size: 14px;
+      color: #0c4a6e;
+    }
+    .comparison-table {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(18, 55, 122, 0.1);
+      margin-top: 40px;
+      grid-column: 1 / -1;
+    }
+    .comparison-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #12377A;
+      text-align: center;
+      margin-bottom: 30px;
+      font-family: 'Inter', sans-serif;
+    }
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+    .comparison-header {
+      font-size: 18px;
+      font-weight: 600;
+      color: #12377A;
+      text-align: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .comparison-cell {
+      padding: 15px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #4a5568;
+      border: 1px solid #e2e8f0;
+    }
+    .structured-cell {
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.1), rgba(34, 197, 94, 0.1));
+      border-color: #16a34a;
+    }
+    .unstructured-cell {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(239, 68, 68, 0.1));
+      border-color: #dc2626;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      color: #12377A;
+      transition: all 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(18, 55, 122, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background: white;
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(18, 55, 122, 0.3);
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <!-- Fullscreen Button -->
+    <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+      <i class="fas fa-expand" id="fullscreenIcon"></i>
+    </button>
+
+    <!-- Slide Header -->
+    <h1 class="title">
+      <i class="fas fa-database"></i>
+      Types of Data
+    </h1>
+    <p class="subtitle">Structured vs Unstructured Data in Real-World Applications</p>
+
+    <!-- Data Types Container -->
+    <div class="data-types-container">
+      <!-- Structured Data Card -->
+      <div class="data-type-card structured-card fade-in">
+        <div class="card-header">
+          <i class="fas fa-table card-icon structured-icon"></i>
+          <h2 class="card-title">Structured Data</h2>
+          <p class="card-subtitle">Organized & Tabular Format</p>
+        </div>
+
+        <div class="definition">
+          <p class="definition-text">
+            "Data that is organized in a predefined format, typically stored in rows and columns, 
+            making it easy to search, query, and analyze using traditional database tools."
+          </p>
+        </div>
+
+        <div class="examples-section">
+          <h3 class="examples-title">Common Examples:</h3>
+          <div class="example-item">
+            <i class="fas fa-file-csv example-icon structured-example-icon"></i>
+            <span class="example-name">CSV Files</span>
+            <span class="example-description">Comma-separated values</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-database example-icon structured-example-icon"></i>
+            <span class="example-name">SQL Databases</span>
+            <span class="example-description">Relational databases</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-table example-icon structured-example-icon"></i>
+            <span class="example-name">Excel Spreadsheets</span>
+            <span class="example-description">Tabular data</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-code example-icon structured-example-icon"></i>
+            <span class="example-name">JSON</span>
+            <span class="example-description">Structured format</span>
+          </div>
+        </div>
+
+        <!-- CSV Example -->
+        <div class="visual-example csv-example">
+          <div class="csv-header">Customer Data (CSV)</div>
+          <div class="csv-row">customer_id, name, email, age, city, purchase_amount</div>
+          <div class="csv-row">1001, John Smith, john@email.com, 28, New York, 150.50</div>
+          <div class="csv-row">1002, Sarah Johnson, sarah@email.com, 34, Los Angeles, 275.00</div>
+          <div class="csv-row">1003, Mike Wilson, mike@email.com, 45, Chicago, 89.99</div>
+          <div class="csv-row">1004, Emily Davis, emily@email.com, 29, Houston, 320.75</div>
+        </div>
+      </div>
+
+      <!-- Unstructured Data Card -->
+      <div class="data-type-card unstructured-card fade-in" style="animation-delay: 0.3s;">
+        <div class="card-header">
+          <i class="fas fa-file-alt card-icon unstructured-icon"></i>
+          <h2 class="card-title">Unstructured Data</h2>
+          <p class="card-subtitle">Free-form & Variable Format</p>
+        </div>
+
+        <div class="definition">
+          <p class="definition-text">
+            "Data that doesn't follow a predefined model or format, making it more difficult 
+            to collect, process, and analyze using traditional methods. Requires special tools and techniques."
+          </p>
+        </div>
+
+        <div class="examples-section">
+          <h3 class="examples-title">Common Examples:</h3>
+          <div class="example-item">
+            <i class="fas fa-image example-icon unstructured-example-icon"></i>
+            <span class="example-name">Images</span>
+            <span class="example-description">Photos, screenshots</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-video example-icon unstructured-example-icon"></i>
+            <span class="example-name">Videos</span>
+            <span class="example-description">MP4, AVI files</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-file-audio example-icon unstructured-example-icon"></i>
+            <span class="example-name">Audio</span>
+            <span class="example-description">MP3, WAV files</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-file-alt example-icon unstructured-example-icon"></i>
+            <span class="example-name">Text Documents</span>
+            <span class="example-description">PDFs, Word docs</span>
+          </div>
+          <div class="example-item">
+            <i class="fas fa-comments example-icon unstructured-example-icon"></i>
+            <span class="example-name">Social Media</span>
+            <span class="example-description">Posts, tweets</span>
+          </div>
+        </div>
+
+        <!-- JSON Example -->
+        <div class="visual-example json-example">
+          <div class="json-header">Social Media Post (JSON)</div>
+          <div style="color: #2d3748;">
+            {<br>
+            &nbsp;&nbsp;<span class="json-key">"post_id"</span>: <span class="json-number">12345</span>,<br>
+            &nbsp;&nbsp;<span class="json-key">"user_name"</span>: <span class="json-string">"@john_smith"</span>,<br>
+            &nbsp;&nbsp;<span class="json-key">"content"</span>: <span class="json-string">"Just finished an amazing data science course! The visualizations were incredible 🚀 #DataScience #Learning"</span>,<br>
+            &nbsp;&nbsp;<span class="json-key">"timestamp"</span>: <span class="json-string">"2024-01-15T14:30:00Z"</span>,<br>
+            &nbsp;&nbsp;<span class="json-key">"likes"</span>: <span class="json-number">42</span>,<br>
+            &nbsp;&nbsp;<span class="json-key">"hashtags"</span>: [<span class="json-string">"#DataScience"</span>, <span class="json-string">"#Learning"</span>]<br>
+            }
+          </div>
+        </div>
+
+        <!-- Image Example -->
+        <div class="image-example">
+          <div class="image-placeholder">
+            <i class="fas fa-image"></i>
+          </div>
+          <div class="image-info">
+            <strong>Product Photo</strong><br>
+            <small>JPEG, 1920x1080, 2.3MB</small><br>
+            <small>Contains: Product image, colors, shapes</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-table fade-in" style="animation-delay: 0.6s;">
+      <h2 class="comparison-title">
+        <i class="fas fa-balance-scale"></i>
+        Structured vs Unstructured Data Comparison
+      </h2>
+      <div class="comparison-grid">
+        <div class="comparison-header">Aspect</div>
+        <div class="comparison-header">Structured Data</div>
+        <div class="comparison-header">Unstructured Data</div>
+
+        <div class="comparison-cell" style="font-weight: 600; color: #12377A;">Format</div>
+        <div class="comparison-cell structured-cell">Rows & Columns<br>Fixed Schema</div>
+        <div class="comparison-cell unstructured-cell">Free-form<br>Variable Format</div>
+
+        <div class="comparison-cell" style="font-weight: 600; color: #12377A;">Storage</div>
+        <div class="comparison-cell structured-cell">SQL Databases<br>CSV, Excel</div>
+        <div class="comparison-cell unstructured-cell">NoSQL<br>File Systems</div>
+
+        <div class="comparison-cell" style="font-weight: 600; color: #12377A;">Analysis</div>
+        <div class="comparison-cell structured-cell">Easy to Query<br>Traditional Tools</div>
+        <div class="comparison-cell unstructured-cell">Requires Special Tools<br>ML/AI Techniques</div>
+
+        <div class="comparison-cell" style="font-weight: 600; color: #12377A;">Volume</div>
+        <div class="comparison-cell structured-cell">~20% of Data<br>Smaller Size</div>
+        <div class="comparison-cell unstructured-cell">~80% of Data<br>Large Size</div>
+
+        <div class="comparison-cell" style="font-weight: 600; color: #12377A;">Examples</div>
+        <div class="comparison-cell structured-cell">Customer Records<br>Sales Data</div>
+        <div class="comparison-cell unstructured-cell">Images, Videos<br>Social Media</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+        });
+      }
+    }
+
+    // Add hover effects to example items
+    document.addEventListener('DOMContentLoaded', function() {
+      const exampleItems = document.querySelectorAll('.example-item');
+      exampleItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateX(8px)';
+          this.style.boxShadow = '0 4px 12px rgba(18, 55, 122, 0.15)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateX(0)';
+          this.style.boxShadow = 'none';
+        });
+      });
+
+      // Animate CSV rows on hover
+      const csvRows = document.querySelectorAll('.csv-row');
+      csvRows.forEach((row, index) => {
+        row.addEventListener('mouseenter', function() {
+          this.style.background = 'rgba(18, 55, 122, 0.1)';
+          this.style.transform = 'scale(1.02)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+          this.style.background = 'transparent';
+          this.style.transform = 'scale(1)';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
