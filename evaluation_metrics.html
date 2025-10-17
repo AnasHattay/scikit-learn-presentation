@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 50%, #CE93D8 100%);
+      color: #4A148C;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #4A148C;
+      font-size: 60px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(74, 20, 140, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      color: #6A1B9A;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+    .content-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(74, 20, 140, 0.1);
+      border: 2px solid rgba(156, 39, 176, 0.3);
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #4A148C;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin-top: 25px;
+    }
+    .metric-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      border: 3px solid;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    .metric-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    }
+    .metric-card.mae {
+      border-color: #FF6B6B;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.05), rgba(255, 107, 107, 0.1));
+    }
+    .metric-card.rmse {
+      border-color: #4ECDC4;
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.05), rgba(78, 205, 196, 0.1));
+    }
+    .metric-card.r2 {
+      border-color: #95E1D3;
+      background: linear-gradient(135deg, rgba(149, 225, 211, 0.05), rgba(149, 225, 211, 0.1));
+    }
+    .metric-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .metric-icon.mae { color: #FF6B6B; }
+    .metric-icon.rmse { color: #4ECDC4; }
+    .metric-icon.r2 { color: #95E1D3; }
+    .metric-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #4A148C;
+      text-align: center;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .metric-full-name {
+      font-size: 14px;
+      color: #6A1B9A;
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .metric-description {
+      font-size: 15px;
+      color: #6A1B9A;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .formula-box {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Georgia', serif;
+      font-size: 18px;
+      text-align: center;
+      margin: 15px 0;
+      border-left: 5px solid;
+    }
+    .formula-box.mae { border-left-color: #FF6B6B; }
+    .formula-box.rmse { border-left-color: #4ECDC4; }
+    .formula-box.r2 { border-left-color: #95E1D3; }
+    .formula-label {
+      color: #a0aec0;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .interpretation-box {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(171, 71, 188, 0.1));
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid #9C27B0;
+    }
+    .interpretation-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #4A148C;
+      margin-bottom: 8px;
+    }
+    .interpretation-text {
+      font-size: 13px;
+      color: #6A1B9A;
+      line-height: 1.5;
+    }
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 15px 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .run-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #9C27B0, #BA68C8);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .run-button:hover {
+      background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+      transform: scale(1.05);
+    }
+    .code-output {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 15px 0;
+      border-left: 4px solid #9C27B0;
+      display: none;
+    }
+    .code-output.show {
+      display: block;
+    }
+    .output-title {
+      color: #BA68C8;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .code-keyword {
+      color: #63b3ed;
+    }
+    .code-string {
+      color: #68d391;
+    }
+    .code-number {
+      color: #fbb6ce;
+    }
+    .code-comment {
+      color: #a0aec0;
+      font-style: italic;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .comparison-table th {
+      background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .comparison-table td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+      color: #6A1B9A;
+    }
+    .comparison-table tr:hover {
+      background: rgba(156, 39, 176, 0.05);
+    }
+    .check-icon {
+      color: #4CAF50;
+      font-size: 18px;
+    }
+    .cross-icon {
+      color: #f44336;
+      font-size: 18px;
+    }
+    .insight-box {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(171, 71, 188, 0.15));
+      border-left: 5px solid #9C27B0;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    .insight-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4A148C;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .insight-text {
+      font-size: 15px;
+      color: #6A1B9A;
+      line-height: 1.6;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(74, 20, 140, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(74, 20, 140, 1);
+      transform: scale(1.05);
+    }
+    .visual-comparison {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .range-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 15px;
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.05), rgba(171, 71, 188, 0.05));
+      border-radius: 10px;
+    }
+    .range-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #4A148C;
+    }
+    .range-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #9C27B0;
+    }
+    .pros-cons-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .pros-box {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(129, 199, 132, 0.1));
+      border-left: 4px solid #4CAF50;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .cons-box {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(239, 83, 80, 0.1));
+      border-left: 4px solid #f44336;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .pros-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2E7D32;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cons-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #c62828;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pros-text, .cons-text {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .pros-text { color: #2E7D32; }
+    .cons-text { color: #c62828; }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container flex flex-col justify-center p-10">
+    <h1 class="title">
+      <i class="fas fa-chart-line"></i> Evaluation Metrics
+    </h1>
+    <p class="subtitle">MAE, RMSE, and R² Score for Regression Models</p>
+    
+    <div class="content-container">
+      
+      <!-- The Three Metrics -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-ruler"></i>
+          The Three Essential Metrics
+        </h3>
+        
+        <div class="metrics-grid">
+          <!-- MAE Card -->
+          <div class="metric-card mae">
+            <div class="metric-icon mae">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="metric-name">MAE</div>
+            <div class="metric-full-name">Mean Absolute Error</div>
+            <div class="metric-description">
+              The average of the absolute differences between predicted and actual values. Simple and intuitive!
+            </div>
+            <div class="formula-box mae">
+              <div class="formula-label">Formula</div>
+              <div style="font-size: 20px; margin: 10px 0;">
+                MAE = (1/<em>n</em>) Σ |<em>y</em><sub>i</sub> - ŷ<sub>i</sub>|
+              </div>
+            </div>
+            <div class="interpretation-box">
+              <div class="interpretation-text">
+                "On average, predictions are off by X units"<br>
+                <strong>Lower is better</strong> (0 = perfect)<br>
+                Same units as target variable
+              </div>
+            </div>
+          </div>
+          
+          <!-- RMSE Card -->
+          <div class="metric-card rmse">
+            <div class="metric-icon rmse">
+              <i class="fas fa-square-root-alt"></i>
+            </div>
+            <div class="metric-name">RMSE</div>
+            <div class="metric-full-name">Root Mean Squared Error</div>
+            <div class="metric-description">
+              Square root of the average of squared differences. Penalizes large errors more heavily than MAE.
+            </div>
+            <div class="formula-box rmse">
+              <div class="formula-label">Formula</div>
+              <div style="font-size: 20px; margin: 10px 0;">
+                RMSE = √[(1/<em>n</em>) Σ (<em>y</em><sub>i</sub> - ŷ<sub>i</sub>)²]
+              </div>
+            </div>
+            <div class="interpretation-box">
+              <div class="interpretation-text">
+                Similar to MAE but more sensitive to outliers<br>
+                <strong>Lower is better</strong> (0 = perfect)<br>
+                Always ≥ MAE (equality only if all errors are equal)
+              </div>
+            </div>
+          </div>
+          
+          <!-- R² Card -->
+          <div class="metric-card r2">
+            <div class="metric-icon r2">
+              <i class="fas fa-percentage"></i>
+            </div>
+            <div class="metric-name">R² Score</div>
+            <div class="metric-full-name">Coefficient of Determination</div>
+            <div class="metric-description">
+              Proportion of variance in the target variable that is predictable from the features. The "goodness of fit"!
+            </div>
+            <div class="formula-box r2">
+              <div class="formula-label">Formula</div>
+              <div style="font-size: 18px; margin: 10px 0;">
+                R² = 1 - (SS<sub>res</sub> / SS<sub>tot</sub>)
+              </div>
+              <div style="font-size: 14px; color: #a0aec0; margin-top: 8px;">
+                SS<sub>res</sub> = Σ(y<sub>i</sub> - ŷ<sub>i</sub>)²&nbsp;&nbsp;|&nbsp;&nbsp;SS<sub>tot</sub> = Σ(y<sub>i</sub> - ȳ)²
+              </div>
+            </div>
+            <div class="interpretation-box">
+              <div class="interpretation-text">
+                Range: -∞ to 1.0<br>
+                <strong>Higher is better</strong> (1.0 = perfect)<br>
+                R² = 0.85 means "85% of variance explained"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Visual Example -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-scatter"></i>
+          Visual Example
+        </h3>
+        
+        <div class="visual-comparison">
+          <div id="metricsPlot" style="width: 100%; height: 450px;"></div>
+        </div>
+        
+        <div class="insight-box">
+          <div class="insight-text">
+            • <strong>Blue dots:</strong> Actual values<br>
+            • <strong>Red line:</strong> Perfect predictions (y = ŷ)<br>
+            • <strong>Vertical lines:</strong> Prediction errors<br>
+            • <strong>MAE:</strong> Average length of those lines<br>
+            • <strong>RMSE:</strong> Like MAE but gives more weight to longer lines<br>
+            • <strong>R²:</strong> How close the dots cluster around the red line
+          </div>
+        </div>
+      </div>
+      
+      
+      
+      
+    </div>
+  </div>
+
+  <script>
+    function runCode(codeId) {
+      const outputId = codeId.replace('-code', '-output');
+      const outputElement = document.getElementById(outputId);
+      const button = event.target;
+      
+      button.disabled = true;
+      button.textContent = '⏳ Running...';
+      
+      setTimeout(() => {
+        outputElement.classList.add('show');
+        button.disabled = false;
+        button.textContent = '✅ Done';
+        
+        setTimeout(() => {
+          button.textContent = '▶ Run';
+        }, 2000);
+      }, 1500);
+    }
+    
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+    
+    // Create visualization showing actual vs predicted with error lines
+    function createMetricsPlot() {
+      // Generate sample data
+      const actual = [];
+      const predicted = [];
+      
+      for (let i = 0; i < 30; i++) {
+        const actualValue = 500 + Math.random() * 2000;
+        const error = (Math.random() - 0.5) * 400;
+        const predictedValue = actualValue + error;
+        
+        actual.push(actualValue);
+        predicted.push(predictedValue);
+      }
+      
+      // Scatter plot of predictions
+      const trace1 = {
+        x: actual,
+        y: predicted,
+        mode: 'markers',
+        type: 'scatter',
+        name: 'Predictions',
+        marker: {
+          color: '#1976D2',
+          size: 10,
+          opacity: 0.7
+        }
+      };
+      
+      // Perfect prediction line (y = x)
+      const minVal = Math.min(...actual);
+      const maxVal = Math.max(...actual);
+      const trace2 = {
+        x: [minVal, maxVal],
+        y: [minVal, maxVal],
+        mode: 'lines',
+        type: 'scatter',
+        name: 'Perfect Predictions (y = ŷ)',
+        line: {
+          color: '#f44336',
+          width: 3,
+          dash: 'dash'
+        }
+      };
+      
+      // Error lines
+      const errorLines = {
+        x: actual.flatMap((val, i) => [val, val, null]),
+        y: actual.flatMap((val, i) => [val, predicted[i], null]),
+        mode: 'lines',
+        type: 'scatter',
+        name: 'Prediction Errors',
+        line: {
+          color: 'rgba(156, 39, 176, 0.3)',
+          width: 1
+        },
+        showlegend: true
+      };
+      
+      const layout = {
+        title: {
+          text: 'Actual vs Predicted Values',
+          font: { family: 'Inter, sans-serif', size: 18, color: '#4A148C' }
+        },
+        xaxis: {
+          title: 'Actual CO2 Emissions (Mt)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#6A1B9A' }
+        },
+        yaxis: {
+          title: 'Predicted CO2 Emissions (Mt)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#6A1B9A' }
+        },
+        plot_bgcolor: '#F9F9F9',
+        paper_bgcolor: '#FFFFFF',
+        hovermode: 'closest',
+        showlegend: true,
+        legend: {
+          x: 0.02,
+          y: 0.98,
+          bgcolor: 'rgba(255, 255, 255, 0.9)',
+          bordercolor: '#E0E0E0',
+          borderwidth: 1
+        }
+      };
+      
+      const config = {
+        responsive: true,
+        displayModeBar: true,
+        modeBarButtonsToRemove: ['lasso2d', 'select2d']
+      };
+      
+      Plotly.newPlot('metricsPlot', [errorLines, trace1, trace2], layout, config);
+    }
+    
+    window.addEventListener('load', createMetricsPlot);
+    window.addEventListener('resize', () => {
+      Plotly.Plots.resize('metricsPlot');
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>
+

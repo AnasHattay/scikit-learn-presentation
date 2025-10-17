@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 50%, #FFCC80 100%);
+      color: #E65100;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #E65100;
+      font-size: 60px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(230, 81, 0, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      color: #F57C00;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+    .content-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(230, 81, 0, 0.1);
+      border: 2px solid rgba(255, 152, 0, 0.3);
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #E65100;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 20px;
+    }
+    .concept-card {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 167, 38, 0.1));
+      border-radius: 15px;
+      padding: 25px;
+      border: 2px solid rgba(255, 152, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .concept-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(230, 81, 0, 0.15);
+    }
+    .concept-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #E65100;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .concept-text {
+      font-size: 15px;
+      color: #F57C00;
+      line-height: 1.6;
+    }
+    .tree-visualization {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .tree-node {
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+    }
+    .tree-leaf {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 15px 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .run-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .run-button:hover {
+      background: linear-gradient(135deg, #F57C00, #FF9800);
+      transform: scale(1.05);
+    }
+    .code-output {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 15px 0;
+      border-left: 4px solid #FF9800;
+      display: none;
+    }
+    .code-output.show {
+      display: block;
+    }
+    .output-title {
+      color: #FFB74D;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .code-keyword {
+      color: #63b3ed;
+    }
+    .code-string {
+      color: #68d391;
+    }
+    .code-number {
+      color: #fbb6ce;
+    }
+    .code-comment {
+      color: #a0aec0;
+      font-style: italic;
+    }
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 25px;
+    }
+    .step-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid #FF9800;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .step-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.2);
+    }
+    .step-number {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      background: #FF9800;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-icon {
+      font-size: 30px;
+      color: #FF9800;
+      margin: 15px 0 10px 0;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #E65100;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 12px;
+      color: #F57C00;
+      line-height: 1.4;
+    }
+    .insight-box {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 167, 38, 0.15));
+      border-left: 5px solid #FF9800;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    .insight-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #E65100;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .insight-text {
+      font-size: 15px;
+      color: #F57C00;
+      line-height: 1.6;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(230, 81, 0, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(230, 81, 0, 1);
+      transform: scale(1.05);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+    .metric-label {
+      font-size: 13px;
+      margin-top: 5px;
+      opacity: 0.95;
+    }
+    .advantage-badge {
+      background: #4CAF50;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin: 5px;
+    }
+    .disadvantage-badge {
+      background: #f44336;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container flex flex-col justify-center p-10">
+    <h1 class="title">
+      <i class="fas fa-sitemap"></i> Decision Trees for CO2 Prediction
+    </h1>
+    <p class="subtitle"></p>
+    
+    <div class="content-container">
+      <!-- What is Decision Tree -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-tree"></i>
+          What is a Decision Tree?
+        </h3>
+        <p style="color: #F57C00; margin-bottom: 20px; font-size: 16px;">
+          A decision tree is a supervised learning algorithm that makes predictions by learning simple decision rules from data features. It creates a tree-like model of decisions, splitting data based on feature values to reach predictions.
+        </p>
+        
+        <div class="concept-grid">
+          <div class="concept-card">
+            <i class="fas fa-code-branch" style="font-size: 32px; color: #FF9800; margin-bottom: 10px;"></i>
+            <div class="concept-title">How It Works</div>
+            <div class="concept-text">
+              Recursively splits the data based on features that best separate the target values, creating a tree structure from root to leaves.
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-question-circle" style="font-size: 32px; color: #FF9800; margin-bottom: 10px;"></i>
+            <div class="concept-title">Decision Rules</div>
+            <div class="concept-text">
+              Each internal node represents a "test" on a feature (e.g., GDP > 1000?), each branch represents the outcome, and leaves represent predictions.
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-eye" style="font-size: 32px; color: #FF9800; margin-bottom: 10px;"></i>
+            <div class="concept-title">Interpretability</div>
+            <div class="concept-text">
+              Highly interpretable! You can visualize and understand exactly how the model makes decisions by following the tree paths.
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-chart-line" style="font-size: 32px; color: #FF9800; margin-bottom: 10px;"></i>
+            <div class="concept-title">Non-Linear</div>
+            <div class="concept-text">
+              Can capture complex non-linear relationships between features and target, unlike linear regression.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tree Visualization -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-project-diagram"></i>
+          Decision Tree Structure Example
+        </h3>
+        
+        <div class="tree-visualization">
+          <div style="text-align: center; font-family: 'Courier New', monospace;">
+            <div style="margin: 20px 0;">
+              <div class="tree-node">GDP > 2500B?</div>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 100px; margin: 30px 0;">
+              <div style="text-align: center;">
+                <div style="font-size: 20px; color: #E65100; margin-bottom: 10px;">↙ Yes</div>
+                <div class="tree-node">Population > 100M?</div>
+                <div style="margin-top: 20px;">
+                  <div style="display: flex; gap: 20px; justify-content: center;">
+                    <div>
+                      <div style="font-size: 16px; color: #E65100;">↙ Yes</div>
+                      <div class="tree-leaf">High CO2<br>~2500 Mt</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 16px; color: #E65100;">↘ No</div>
+                      <div class="tree-leaf">Medium CO2<br>~800 Mt</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div style="text-align: center;">
+                <div style="font-size: 20px; color: #E65100; margin-bottom: 10px;">↘ No</div>
+                <div class="tree-node">Year > 2000?</div>
+                <div style="margin-top: 20px;">
+                  <div style="display: flex; gap: 20px; justify-content: center;">
+                    <div>
+                      <div style="font-size: 16px; color: #E65100;">↙ Yes</div>
+                      <div class="tree-leaf">Low CO2<br>~200 Mt</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 16px; color: #E65100;">↘ No</div>
+                      <div class="tree-leaf">Very Low CO2<br>~50 Mt</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="insight-box">
+          <div class="insight-text">
+            The tree makes decisions by asking yes/no questions about features. Starting from the root, it follows the path based on the data until reaching a leaf node (prediction).
+          </div>
+        </div>
+      </div>
+      
+      <!-- Implementation Steps -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-list-ol"></i>
+          Implementation Steps
+        </h3>
+        
+        <div class="steps-container">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <i class="fas fa-database step-icon"></i>
+            <div class="step-title">Prepare Data</div>
+            <div class="step-desc">Load CO2 dataset and select features</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <i class="fas fa-cut step-icon"></i>
+            <div class="step-title">Split Dataset</div>
+            <div class="step-desc">Divide into training and testing sets</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <i class="fas fa-tree step-icon"></i>
+            <div class="step-title">Build Tree</div>
+            <div class="step-desc">Train decision tree regressor</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <i class="fas fa-chart-bar step-icon"></i>
+            <div class="step-title">Evaluate</div>
+            <div class="step-desc">Assess model performance metrics</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Visualization -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-scatter"></i>
+          Visualization: Decision Tree Predictions
+        </h3>
+        
+        <div class="tree-visualization">
+          <div id="treePlot" style="width: 100%; height: 400px;"></div>
+        </div>
+        
+      </div>
+      
+      
+    </div>
+  </div>
+
+  <script>
+    function runCode(codeId) {
+      const outputId = codeId.replace('-code', '-output');
+      const outputElement = document.getElementById(outputId);
+      const button = event.target;
+      
+      button.disabled = true;
+      button.textContent = '⏳ Running...';
+      
+      setTimeout(() => {
+        outputElement.classList.add('show');
+        button.disabled = false;
+        button.textContent = '✅ Done';
+        
+        setTimeout(() => {
+          button.textContent = '▶ Run';
+        }, 2000);
+      }, 1500);
+    }
+    
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+    
+    // Create decision tree prediction plot
+    function createTreePlot() {
+      const gdp = [];
+      const co2_actual = [];
+      const co2_predicted = [];
+      
+      // Generate sample data with step-like pattern (characteristic of decision trees)
+      for (let i = 0; i < 60; i++) {
+        const gdpValue = Math.random() * 5000 + 1000;
+        const actualCO2 = 0.8 * gdpValue + Math.random() * 500 - 250 + 200;
+        
+        // Decision tree makes step-like predictions
+        let predictedCO2;
+        if (gdpValue < 2000) predictedCO2 = 1200;
+        else if (gdpValue < 3000) predictedCO2 = 2000;
+        else if (gdpValue < 4000) predictedCO2 = 3200;
+        else predictedCO2 = 4500;
+        
+        // Add some variance
+        predictedCO2 += Math.random() * 200 - 100;
+        
+        gdp.push(gdpValue);
+        co2_actual.push(actualCO2);
+        co2_predicted.push(predictedCO2);
+      }
+      
+      // Sort for line plot
+      const indices = gdp.map((_, i) => i).sort((a, b) => gdp[a] - gdp[b]);
+      const sortedGDP = indices.map(i => gdp[i]);
+      const sortedPredicted = indices.map(i => co2_predicted[i]);
+      
+      const trace1 = {
+        x: gdp,
+        y: co2_actual,
+        mode: 'markers',
+        type: 'scatter',
+        name: 'Actual CO2 Emissions',
+        marker: {
+          color: '#1976D2',
+          size: 8,
+          opacity: 0.7
+        }
+      };
+      
+      const trace2 = {
+        x: sortedGDP,
+        y: sortedPredicted,
+        mode: 'lines',
+        type: 'scatter',
+        name: 'Decision Tree Predictions',
+        line: {
+          color: '#FF9800',
+          width: 3
+        }
+      };
+      
+      const layout = {
+        title: {
+          text: 'CO2 Emissions vs GDP: Decision Tree Model',
+          font: { family: 'Inter, sans-serif', size: 18, color: '#E65100' }
+        },
+        xaxis: {
+          title: 'GDP (Billion USD)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#F57C00' }
+        },
+        yaxis: {
+          title: 'CO2 Emissions (Million Tonnes)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#F57C00' }
+        },
+        plot_bgcolor: '#F9F9F9',
+        paper_bgcolor: '#FFFFFF',
+        hovermode: 'closest',
+        showlegend: true,
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(255, 255, 255, 0.8)', bordercolor: '#E0E0E0', borderwidth: 1 }
+      };
+      
+      Plotly.newPlot('treePlot', [trace1, trace2], layout, { responsive: true });
+    }
+    
+    
+    window.addEventListener('load', () => {
+      createTreePlot();
+    });
+    
+    window.addEventListener('resize', () => {
+      Plotly.Plots.resize('treePlot');
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>
+

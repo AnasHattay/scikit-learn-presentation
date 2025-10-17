@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+    
+    .slide-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #E8F5E8 0%, #D4F4D4 50%, #C8E6C9 100%);
+      color: #2E7D32;
+      font-family: 'SF Pro Display', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .title {
+      color: #1B5E20;
+      font-size: 60px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 2px 4px rgba(27, 94, 32, 0.1);
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      color: #2E7D32;
+      font-size: 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+    .content-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(27, 94, 32, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.2);
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 20px;
+    }
+    .concept-card {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(129, 199, 132, 0.1));
+      border-radius: 15px;
+      padding: 25px;
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      transition: all 0.3s ease;
+    }
+    .concept-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(27, 94, 32, 0.15);
+    }
+    .concept-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1B5E20;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+    .concept-text {
+      font-size: 15px;
+      color: #2E7D32;
+      line-height: 1.6;
+    }
+    .formula-box {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-family: 'Georgia', serif;
+      font-size: 22px;
+      text-align: center;
+      border-left: 6px solid #4CAF50;
+    }
+    .formula-label {
+      color: #68d391;
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .variable-explanation {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .variable-item {
+      background: rgba(76, 175, 80, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #4CAF50;
+    }
+    .variable-name {
+      font-weight: 700;
+      color: #1B5E20;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+    }
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 15px 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .run-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #12377A, #1e40af);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .run-button:hover {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      transform: scale(1.05);
+    }
+    .code-output {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 15px 0;
+      border-left: 4px solid #10b981;
+      display: none;
+    }
+    .code-output.show {
+      display: block;
+    }
+    .output-title {
+      color: #10b981;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .code-keyword {
+      color: #63b3ed;
+    }
+    .code-string {
+      color: #68d391;
+    }
+    .code-number {
+      color: #fbb6ce;
+    }
+    .code-comment {
+      color: #a0aec0;
+      font-style: italic;
+    }
+    .visualization-container {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 25px;
+    }
+    .step-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid #4CAF50;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .step-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+    }
+    .step-number {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      background: #4CAF50;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-icon {
+      font-size: 30px;
+      color: #4CAF50;
+      margin: 15px 0 10px 0;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1B5E20;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 12px;
+      color: #2E7D32;
+      line-height: 1.4;
+    }
+    .insight-box {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(129, 199, 132, 0.15));
+      border-left: 5px solid #4CAF50;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    .insight-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1B5E20;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .insight-text {
+      font-size: 15px;
+      color: #2E7D32;
+      line-height: 1.6;
+    }
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(27, 94, 32, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .fullscreen-btn:hover {
+      background-color: rgba(27, 94, 32, 1);
+      transform: scale(1.05);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+    .metric-label {
+      font-size: 13px;
+      margin-top: 5px;
+      opacity: 0.95;
+    }
+  </style>
+</head>
+<body>
+  <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+    <i class="fas fa-expand" id="fullscreenIcon"></i> Fullscreen
+  </button>
+  
+  <div class="slide-container flex flex-col justify-center p-10">
+    <h1 class="title">
+      <i class="fas fa-chart-line"></i> Linear Regression for CO2 Prediction
+    </h1>
+    <p class="subtitle"></p>
+    
+    <div class="content-container">
+      <!-- What is Linear Regression -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-brain"></i>
+          What is Linear Regression?
+        </h3>
+        <p style="color: #2E7D32; margin-bottom: 20px; font-size: 16px;">
+          Linear regression is a supervised machine learning algorithm that models the relationship between a dependent variable and one or more independent variables by fitting a linear equation to observed data.
+        </p>
+        
+        <div class="concept-grid">
+          <div class="concept-card">
+            <i class="fas fa-bullseye" style="font-size: 32px; color: #4CAF50; margin-bottom: 10px;"></i>
+            <div class="concept-title">Goal</div>
+            <div class="concept-text">
+              Find the best-fitting straight line through the data points that minimizes the prediction error.
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-calculator" style="font-size: 32px; color: #4CAF50; margin-bottom: 10px;"></i>
+            <div class="concept-title">Use Case</div>
+            <div class="concept-text">
+              Predict continuous values (like CO2 emissions) based on input features (like GDP, population, year).
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-wave-square" style="font-size: 32px; color: #4CAF50; margin-bottom: 10px;"></i>
+            <div class="concept-title">Simple Form</div>
+            <div class="concept-text">
+              For one feature: draws a straight line. For multiple features: creates a hyperplane in n-dimensional space.
+            </div>
+          </div>
+          
+          <div class="concept-card">
+            <i class="fas fa-chart-area" style="font-size: 32px; color: #4CAF50; margin-bottom: 10px;"></i>
+            <div class="concept-title">Performance</div>
+            <div class="concept-text">
+              Works best when there's a linear relationship between features and target. Fast and interpretable.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mathematical Foundation -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-square-root-alt"></i>
+          Mathematical Foundation
+        </h3>
+        
+        <div class="formula-box">
+          <div class="formula-label">Linear Regression Equation</div>
+          <div style="font-size: 28px; margin: 15px 0;">
+            <em>y</em> = <em>β₀</em> + <em>β₁x₁</em> + <em>β₂x₂</em> + ... + <em>βₙxₙ</em> + <em>ε</em>
+          </div>
+        </div>
+        
+        <div class="variable-explanation">
+          <div class="variable-item">
+            <span class="variable-name">y</span> = Target variable (CO2 emissions)
+          </div>
+          <div class="variable-item">
+            <span class="variable-name">β₀</span> = Intercept (baseline CO2)
+          </div>
+          <div class="variable-item">
+            <span class="variable-name">β₁, β₂, ..., βₙ</span> = Coefficients (feature weights)
+          </div>
+          <div class="variable-item">
+            <span class="variable-name">x₁, x₂, ..., xₙ</span> = Features (GDP, population, etc.)
+          </div>
+          <div class="variable-item">
+            <span class="variable-name">ε</span> = Error term (residual)
+          </div>
+          <div class="variable-item">
+            <span class="variable-name">n</span> = Number of features
+          </div>
+        </div>
+        
+        <div class="formula-box" style="margin-top: 20px;">
+          <div class="formula-label">Cost Function (Mean Squared Error)</div>
+          <div style="font-size: 24px; margin: 15px 0;">
+            MSE = (1/<em>n</em>) Σ(<em>y</em><sub>actual</sub> - <em>y</em><sub>predicted</sub>)²
+          </div>
+        </div>
+        
+        <div class="insight-box">
+          <div class="insight-title">
+            <i class="fas fa-lightbulb"></i>
+            Idea
+          </div>
+          <div class="insight-text">
+            The algorithm finds coefficients (β values) that minimize the Mean Squared Error, making predictions as accurate as possible.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Implementation Steps -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-list-ol"></i>
+          Implementation Steps
+        </h3>
+        
+        <div class="steps-container">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <i class="fas fa-database step-icon"></i>
+            <div class="step-title">Load Data</div>
+            <div class="step-desc">Import CO2 dataset and select features</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <i class="fas fa-broom step-icon"></i>
+            <div class="step-title">Preprocess</div>
+            <div class="step-desc">Clean data, handle missing values, normalize</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <i class="fas fa-cut step-icon"></i>
+            <div class="step-title">Split Data</div>
+            <div class="step-desc">Divide into training and testing sets</div>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <i class="fas fa-cog step-icon"></i>
+            <div class="step-title">Train Model</div>
+            <div class="step-desc">Fit linear regression to training data</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Visualization -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-scatter"></i>
+          Linear Regression Visualization
+        </h3>
+        
+        <div class="visualization-container">
+          <div id="regressionPlot" style="width: 100%; height: 400px;"></div>
+          
+          <!-- Interactive Controls -->
+          <div style="text-align: center; margin-top: 20px;">
+            <div id="stepCounter" style="font-size: 18px; font-weight: 600; color: #1B5E20; margin-bottom: 15px;">
+            </div>
+            <button id="nextLineBtn" onclick="generateNextLine()" 
+                    style="background: linear-gradient(135deg, #4CAF50, #66BB6A); 
+                           color: white; border: none; padding: 12px 24px; 
+                           border-radius: 8px; font-size: 16px; font-weight: 600; 
+                           cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
+              <i class="fas fa-play"></i> Generate Line
+            </button>
+            <div id="evaluationPrompt" style="margin-top: 15px; font-size: 16px; color: #2E7D32; font-style: italic;">
+              Is this the best line to represent the data?
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      
+      <!-- Limitations -->
+      <div class="section">
+        <h3 class="section-title">
+          <i class="fas fa-exclamation-circle"></i>
+          Model Limitations
+        </h3>
+        
+        <div class="insight-box" style="background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 193, 7, 0.1)); border-left-color: #FF9800;">
+          <div class="insight-title" style="color: #E65100;">
+            <i class="fas fa-warning"></i>
+            Limitations
+          </div>
+          <div class="insight-text" style="color: #E65100;">
+            • <strong>Linearity Assumption:</strong> Assumes relationships are linear (may not capture complex patterns)<br>
+            • <strong>Feature Selection:</strong> Limited to selected features (may miss important variables)<br>
+            • <strong>Outliers:</strong> Sensitive to extreme values in the data<br>
+            • <strong>Multicollinearity:</strong> Correlated features can affect coefficient interpretation
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to handle Run Code button clicks
+    function runCode(codeId) {
+      const outputId = codeId.replace('-code', '-output');
+      const outputElement = document.getElementById(outputId);
+      const button = event.target;
+      
+      button.disabled = true;
+      button.textContent = '⏳ Running...';
+      
+      setTimeout(() => {
+        outputElement.classList.add('show');
+        button.disabled = false;
+        button.textContent = '✅ Done';
+        
+        setTimeout(() => {
+          button.textContent = '▶ Run';
+        }, 2000);
+      }, 1500);
+    }
+    
+    function toggleFullscreen() {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.className = 'fas fa-compress';
+          btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to enable fullscreen:', err.message);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          icon.className = 'fas fa-expand';
+          btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+        }).catch(err => {
+          console.log('Error attempting to exit fullscreen:', err.message);
+        });
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('fullscreenBtn');
+      const icon = document.getElementById('fullscreenIcon');
+      
+      if (!document.fullscreenElement) {
+        icon.className = 'fas fa-expand';
+        btn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+      } else {
+        icon.className = 'fas fa-compress';
+        btn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+      }
+    });
+    
+    // Global variables for interactive visualization
+    let currentStep = 0;
+    let gdp = [];
+    let co2_actual = [];
+    let co2_correct = [];
+    let plotData = [];
+    
+    // Different line attempts (slope, intercept, description)
+    const lineAttempts = [
+      { slope: 0.2, intercept: 800, desc: "Too flat - doesn't capture the trend" },
+      { slope: 1.5, intercept: -500, desc: "Too steep - overestimates at high GDP" },
+      { slope: 0.5, intercept: 400, desc: "Better slope but wrong intercept" },
+      { slope: 0.9, intercept: 100, desc: "Close but not quite optimal" },
+      { slope: 0.8, intercept: 200, desc: "Optimal line - best fit!" }
+    ];
+    
+    // Create interactive regression plot
+    function createRegressionPlot() {
+      // Generate sample data points
+      for (let i = 0; i < 50; i++) {
+        const gdpValue = Math.random() * 5000 + 1000;
+        const actualCO2 = 0.8 * gdpValue + Math.random() * 500 - 250 + 200;
+        
+        gdp.push(gdpValue);
+        co2_actual.push(actualCO2);
+        co2_correct.push(0.8 * gdpValue + 200);
+      }
+      
+      // Sort by GDP for line plot
+      const indices = gdp.map((_, i) => i).sort((a, b) => gdp[a] - gdp[b]);
+      const sortedGDP = indices.map(i => gdp[i]);
+      const sortedCorrect = indices.map(i => co2_correct[i]);
+      
+      // Actual data points
+      const trace1 = {
+        x: gdp,
+        y: co2_actual,
+        mode: 'markers',
+        type: 'scatter',
+        name: 'Actual CO2 Emissions',
+        marker: {
+          color: '#1976D2',
+          size: 8,
+          opacity: 0.7
+        }
+      };
+      
+      // Initial empty line (will be updated)
+      const trace2 = {
+        x: [],
+        y: [],
+        mode: 'lines',
+        type: 'scatter',
+        name: 'Generated Line',
+        line: {
+          color: '#D32F2F',
+          width: 3
+        }
+      };
+      
+      plotData = [trace1, trace2];
+      
+      const layout = {
+        title: {
+          text: 'CO2 Emissions vs GDP: Linear Regression',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 18,
+            color: '#1B5E20'
+          }
+        },
+        xaxis: {
+          title: 'GDP (Billion USD)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#2E7D32' }
+        },
+        yaxis: {
+          title: 'CO2 Emissions (Million Tonnes)',
+          gridcolor: '#E0E0E0',
+          titlefont: { size: 14, color: '#2E7D32' }
+        },
+        plot_bgcolor: '#F9F9F9',
+        paper_bgcolor: '#FFFFFF',
+        hovermode: 'closest',
+        showlegend: true,
+        legend: {
+          x: 0.02,
+          y: 0.98,
+          bgcolor: 'rgba(255, 255, 255, 0.8)',
+          bordercolor: '#E0E0E0',
+          borderwidth: 1
+        }
+      };
+      
+      const config = {
+        responsive: true,
+        displayModeBar: true,
+        modeBarButtonsToRemove: ['lasso2d', 'select2d']
+      };
+      
+      Plotly.newPlot('regressionPlot', plotData, layout, config);
+    }
+    
+    // Generate next line on button click
+    function generateNextLine() {
+      if (currentStep >= lineAttempts.length) return;
+      
+      const attempt = lineAttempts[currentStep];
+      const button = document.getElementById('nextLineBtn');
+      const stepCounter = document.getElementById('stepCounter');
+      const evaluationPrompt = document.getElementById('evaluationPrompt');
+      
+      // Generate line points using current attempt parameters
+      const sortedGDP = gdp.slice().sort((a, b) => a - b);
+      const lineY = sortedGDP.map(x => attempt.slope * x + attempt.intercept);
+      
+      // Update the line trace
+      plotData[1].x = sortedGDP;
+      plotData[1].y = lineY;
+      plotData[1].name = `Line ${currentStep + 1}: ${attempt.desc}`;
+      
+      // Change line color based on step
+      const colors = ['#FF5722', '#FF9800', '#FFC107', '#FFEB3B', '#4CAF50'];
+      plotData[1].line.color = colors[currentStep];
+      
+      // Update plot
+      Plotly.redraw('regressionPlot');
+      
+      // Update UI
+      currentStep++;
+      stepCounter.textContent = `${attempt.desc}`;
+      
+      if (currentStep < lineAttempts.length) {
+        button.innerHTML = '<i class="fas fa-play"></i> Generate Next Line';
+        evaluationPrompt.textContent = 'Is this the best line to represent the data?';
+      } else {
+        // Show final correct line
+        showCorrectLine();
+      }
+    }
+    
+    // Show the correct regression line
+    function showCorrectLine() {
+      const sortedGDP = gdp.slice().sort((a, b) => a - b);
+      const sortedCorrect = sortedGDP.map(x => 0.8 * x + 200);
+      
+      // Update line to correct one
+      plotData[1].x = sortedGDP;
+      plotData[1].y = sortedCorrect;
+      plotData[1].name = 'Optimal Linear Regression Line';
+      plotData[1].line.color = '#4CAF50';
+      plotData[1].line.width = 4;
+      
+      // Update UI
+      const button = document.getElementById('nextLineBtn');
+      const stepCounter = document.getElementById('stepCounter');
+      const evaluationPrompt = document.getElementById('evaluationPrompt');
+      
+      button.innerHTML = '<i class="fas fa-check"></i> Complete!';
+      button.style.background = 'linear-gradient(135deg, #4CAF50, #66BB6A)';
+      button.disabled = true;
+      stepCounter.textContent = 'The optimal regression line!';
+      evaluationPrompt.innerHTML = '<strong>This is the best line!</strong> It minimizes the sum of squared errors between actual and predicted values.';
+      evaluationPrompt.style.color = '#4CAF50';
+      evaluationPrompt.style.fontWeight = 'bold';
+      
+      Plotly.redraw('regressionPlot');
+    }
+    
+    // Create plot when page loads
+    window.addEventListener('load', createRegressionPlot);
+    
+    // Recreate plot on window resize
+    window.addEventListener('resize', () => {
+      Plotly.Plots.resize('regressionPlot');
+    });
+  </script>
+  <script src="navigation.js"></script>
+</body>
+</html>
+

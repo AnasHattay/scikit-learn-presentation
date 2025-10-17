@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', function() {
     'numpy_broadcasting.html',
     'numpy_linear_algebra.html',
     'numpy_statistics.html',
+    'data_science_pipeline.html',
+    'data_types.html',
+    'co2_dataset.html',
+    'co2_dataset_examples.html',
+    'data_visualizations.html',
+    'data_skewness.html',
+    'feature_standardization.html',
+    'why_standardize_regression.html',
+    'classification_vs_regression.html',
+    'train_test_split.html',
+    'evaluation_metrics.html',
+    'linear_regression_co2.html',
+    'decision_tree_co2.html',
+    'random_forest_co2.html',
     'lets_code.html'
   ];
   
